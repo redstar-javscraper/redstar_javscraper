@@ -212,17 +212,19 @@ def Get_search_url(SEARCH_URL, txt, reqMode='GET'):
     con = ''
     try:
         if (reqMode == 'POST'):
-            # Logging('Request is POST')
+            Logging('Request is POST','Info')
             data = {'search_str': txt}
             Logging('POST SearchURL: ' + SEARCH_URL + ' data: ' + txt, 'Debug')
             req = urllib2.Request(SEARCH_URL, data)
         else:
-            # Logging('Request is GET')
+            Logging('Request is GET','Info')
             encodedId = urllib2.quote(txt)
+            Logging('encodedID: ' + encodedId, 'Info')
             url = SEARCH_URL + encodedId
-            url.add_header('age_check_done', 1)
-            Logging('GET SearchURL: ' + url, 'Debug')
+            Logging('SearchURL: ' + url, 'Info')
             req = urllib2.Request(url)
+            req.add_header('age_check_done', '1')
+            Logging('Header adding', 'Info')
         try:
             con = urllib2.urlopen(req,timeout=int(Prefs['timeout']))
             Logging('URL Open Success', 'Info')
@@ -231,7 +233,7 @@ def Get_search_url(SEARCH_URL, txt, reqMode='GET'):
         web_byte = con.read()
         # Logging('webbyte completed')
         webpage = web_byte.decode('utf-8')
-        # Logging('webpage : ' + str(webpage))
+        # Logging('webpage : ' + str(webpage), 'Debug')
         Logging("검색결과 가져옴(Got search result)", 'Info')
         return webpage
     except:
