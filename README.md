@@ -3,11 +3,12 @@
 PLEX용 Japan Adule Video Metadata scraper입니다.
 현재 스크래핑 가능 사이트는 다음과 같습니다.
 
-1. dmm.co.jp
+1. dmm.co.jp -> 성인확인 쿠키 추가, 정상 접속(단, VPN 필요)
 2. r18.com
 3. javbus.com
 4. pornav.co => 일부 컨텐츠는 포스터 자리에 동영상이 있어 포스터가 나오지 않을 수 있음
 5. javdb.com => 일부 컨텐츠는 로그인이 필요해 포스터가 나오지 않을 수 있음
+6. javlibrary.com
 
 # 1. 설치방법
 ## A. 파일 복사
@@ -169,6 +170,11 @@ ptX
 - 0022223 => 불가능. 숫자만 들어간 품번 검색 불가
 
 # ※ 변경사항
+
+2021.06.10
+- DMM 검색 실패 수정 -> 성인 확인 페이지 우회 코드가 header에서 cookie로 변경되었음
+- javlibrary.com 검색사이트 추가
+
 2020.12.26
 - DMM 검색 실패 수정 -> 성인 확인 페이지 우회
 
