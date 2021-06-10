@@ -223,17 +223,19 @@ def Get_search_url(SEARCH_URL, txt, reqMode='GET'):
             url = SEARCH_URL + encodedId
             Logging('SearchURL: ' + url, 'Info')
             req = urllib2.Request(url)
-            req.add_header('age_check_done', '1')
-            Logging('Header adding', 'Info')
+            req.add_header('Cookie','age_check_done=1')
+            # req.add_header('age_check_done', '1')
+            # req.add_header('Referer', SEARCH_URL)
+            Logging('Cookie added(Age_check_done=1, to Cookie)', 'Info')
         try:
-            con = urllib2.urlopen(req,timeout=int(Prefs['timeout']))
+            con = urllib2.urlopen(req, timeout=int(Prefs['timeout']))
             Logging('URL Open Success', 'Info')
         except urllib2.URLError as e:
             Logging(e.reason,'Debug')
         web_byte = con.read()
         # Logging('webbyte completed')
         webpage = web_byte.decode('utf-8')
-        # Logging('webpage : ' + str(webpage), 'Debug')
+        Logging('webpage : ' + str(webpage), 'Debug')
         Logging("검색결과 가져옴(Got search result)", 'Info')
         return webpage
     except:
@@ -336,6 +338,7 @@ class redstar_javscraper(Agent.Movies):
         Logging('option check javbus: ' + str(Prefs['javbus_use']),'Info')
         Logging('option check pornav: ' + str(Prefs['pornav_use']),'Info')
         Logging('option check javdb: ' + str(Prefs['javdb_use']),'Info')
+        Logging('option check javlibrary: ' + str(Prefs['javlibrary_use']), 'Info')
 
         amateur = True
         nSearchstr=media.name.upper()
@@ -359,6 +362,9 @@ class redstar_javscraper(Agent.Movies):
             # Logging('pornav result: '  + str(nResult), 'Debug')
         if (str(Prefs['javdb_use']) == 'True' and nResult == 0):
             nResult=self.javdb_search(results, media, lang)
+            # Logging('javdb result: '  + str(nResult),'Debug')
+        if (str(Prefs['javlibrary_use']) == 'True' and nResult == 0):
+            nResult=self.javlibrary_search(results, media, lang)
             # Logging('javdb result: '  + str(nResult),'Debug')
         if (nResult == 0):
             Logging('@@@ Search failed on all sites.', 'Error')
@@ -407,6 +413,10 @@ class redstar_javscraper(Agent.Movies):
         elif (str(Prefs['javdb_use']) == 'True' and ((nSite == 'javdb')or (nSite == ' '))):
             nResult=self.javdb_update(metadata, media, lang, nOrgID,ncroling)
             # Logging('javdb result: ' + str(nResult), 'Debug')
+        elif (str(Prefs['javlibrary_use']) == 'True' and ((nSite == 'javlibrary')or (nSite == ' '))):
+            nResult=self.javlibrary_update(metadata, media, lang, nOrgID,ncroling)
+            # Logging('javdb result: ' + str(nResult), 'Debug')
+
         Logging("####### End update #########", 'Info')
 
     def get_fileinfo(self,media):
@@ -442,6 +452,7 @@ class redstar_javscraper(Agent.Movies):
         Logging('##### Start dmm video search #####','Info')
         # SEARCH_URL = 'https://www.dmm.co.jp/age_check/=/declared=yes/?rurl='
         # SEARCH_URL = SEARCH_URL + 'http%3A%2F%2Fwww.dmm.co.jp%2Fdigital%2Fvideoa%2F-%2Flist%2Fsearch%2F%3D%2F%3Fsearchstr%3D'
+        # SEARCH_URL = 'https://www.dmm.co.jp/age_check/=/declared=yes/?rurl=http%3A%2F%2Fwww.dmm.co.jp%2Fdigital%2Fvideoa%2F-%2Flist%2Fsearch%2F%3D%2F%3Fsearchstr%3D'
         SEARCH_URL = 'https://www.dmm.co.jp/digital/videoa/-/list/search/=/?searchstr='
         Logging('Media input title: ' + media.name,'Debug')
 
@@ -478,6 +489,7 @@ class redstar_javscraper(Agent.Movies):
                 id = org_id
                 searchtype='DMMo'
                 title = String_slice(searchResults, 'alt="', '"')
+                title = Papago_Trans(title,'ja')
                 if (Prefs['filenametotitle'] == False or title_fromfile == ''):
                     titletype = 'N'
                 else:
@@ -768,6 +780,71 @@ class redstar_javscraper(Agent.Movies):
             Logging('javdb Video result not found1','Error')
         return 0
 
+    def javlibrary_search(self,results,media,lang):
+        ##############################
+        ###### javlibrary video 검색  ######
+        ##############################
+        Logging('##### Start javlibrary video search #####','Info')
+        SEARCH_URL = 'http://www.javlibrary.com/ja/vl_searchbyid.php?keyword='
+
+        getfileinfo=self.get_fileinfo(media)
+        if getfileinfo is None:
+            Logging('파일 정보를 분석할 수 없어 검색을 종료합니다', 'Debug')
+            return
+        Log('품번: ' + getfileinfo[0])
+        Log('타이틀: <' + getfileinfo[1] + '>')
+        org_id=getfileinfo[0]
+        title_fromfile=getfileinfo[1].strip()
+        release_id=poombun_split_num(org_id) #아마추어 작품의 경우 품번 숫자만 필요해서 숫자만 추리는 함수 호출
+
+        Logging('******* javlibrary Video 검색 시작(Media search start) ****** ','Info')
+        Logging("### Release ID:    " + str(release_id) + ' org_id: ' + str(org_id),'Info')  # Release ID: IPZ00929 org_id: IPZ-929
+        # searchResults = Get_search_url(SEARCH_URL + '&f=all', release_id)
+
+        try:
+            searchResults = HTTP.Request(SEARCH_URL + release_id).content
+        except:
+            Logging( 'javlibrary search exception','Error')
+            return 0
+        if (searchResults <> ''):
+            nResult = searchResults.find('ご指定の検索条件に合う項目がありませんでした') #'상세 검색 조건에 맞는 항목이 없습니다' 메시지임
+            Logging("javlibrary 호출 본문: ",'Debug')
+            Logging(searchResults,'Debug')
+            Logging("본문 검색 결과값:",'Debug')
+            Logging(nResult,'Debug')
+            if (nResult == -1):
+                Logging('##### javlibrary Video Result Found #####','Info')
+                if (uncensored_check(media.filename) == 1):
+                    uncResult = 'U'
+                else:
+                    uncResult = 'C'
+                Logging('### 파일명에 노모 글자 포함인지 확인 UNC:' + uncResult,'Debug')
+
+                searchResults=String_slice(searchResults,'<div class="video"','</div></div>')
+                if (searchResults.find(release_id) == -1): return 0
+                content_id = String_slice(searchResults, './?v=','"')
+                Logging(' Content_id: ' + content_id,'Debug')
+                id = org_id
+                title = String_slice(searchResults, '<div class="title" >', '</div>')
+                Logging(' Title: ' + title, 'Debug')
+                title = Papago_Trans(title,'ja')
+                searchtype = 'javlibrary'
+                if (Prefs['filenametotitle'] == True and title_fromfile != ''):
+                    title = title_fromfile
+                    titletype = 'Y'
+                else:
+                    titletype = 'N'
+                name = '[' + id + '] ' + title + ' §' + searchtype + '§' + uncResult + '§' + id + '§' + titletype
+                score = 100
+                results.Append(MetadataSearchResult(id=content_id, name=name, score=score, lang=lang))
+                Logging('##Search Update Result ==> id: ' + content_id + ' name: ' + name + ' score : ' + str(score),'Debug')
+                return 1
+            else:
+                Logging('javlibrary Video result Not found','Error')
+        else:
+            Logging('javlibrary Video result not found1','Error')
+        return 0
+
     def func_update_title(self,metadata,media,id,title,ncroling,Trans):
         # title: 크롤링에서 가져온 제목, ncroling: Y일때 파일명을 타이틀로, N일때 웹크롤링을 타이틀로
         Logging('func_update_title 함수 시작','Debug')
@@ -812,7 +889,7 @@ class redstar_javscraper(Agent.Movies):
 
         Logging('ORG_ID: ' + org_id + ' metadataID: ' + str(metadata.id),'Debug')
 
-        searchResults = Get_search_url(DETAIL_URL, metadata.id + '/?i3_ref=list&i3_ord=1')
+        searchResults = Get_search_url(DETAIL_URL, metadata.id,'GET')
         searchResults = String_slice(searchResults, 'area-headline group', 'div id="recommend"')
         if (searchResults == ''):
             Logging('### 검색 사이트: DMM 아마추어 영상 / UpdateSite: DMM Amateur ###','Info')
@@ -1775,6 +1852,227 @@ class redstar_javscraper(Agent.Movies):
                 Logging('### series 컬렉션 생성 안함(설정 미체크) Series connection not create(prefrence not check ###','Info')
 
             Logging('******* javdb 미디어 업데이트 완료/Media Update completed ****** ','Info')
+
+        except:
+            Logging('@@@ Series collection failed','Error')
+
+        return 1
+
+    def javlibrary_update(self, metadata, media, lang, nOrgID,ncroling):
+
+        # nIDs[0]: 검색용 품번  nIDs[1]: 검색된 사이트(DMM, R18)   nIDs[2]: 아마추어(C)or일반(A)  nIDs[3]: 오리지널 품번(OAE-101)
+        Logging('****** 미디어 업데이트(상세항목) 시작 / javlibrary Media Update Start *******','Info')
+        # Logging("Update ID:   " + str(metadata.id) +  ' Original ID: ' + org_id)
+
+        #####################################################
+        ################# javlibrary update #################
+        #####################################################
+        Logging('### 검색 사이트: javlibrary 일반 영상 / UpdateSite: javlibrary Video ###','Info')
+        DETAIL_URL = 'http://www.javlibrary.com/ja/?v='
+        org_id=poombun_check(nOrgID,'')
+        # release_id=poombun_split_num(org_id)
+
+        try:
+            searchResults = HTTP.Request(DETAIL_URL + metadata.id , headers = {'Referer': 'http://www.google.com'}, timeout=int(Prefs['timeout'])).content
+        except:
+            Logging('@@@ Update content load failed','Error')
+            return 0
+
+        # Logging(searchResults)
+        nResult = searchResults.find('404 Not Found')  # 검색결과 확인
+        if (nResult <> -1):
+            Logging('@@@ Update content search result failed1','Error')
+            return 0
+        # searchResults = String_slice(searchResults, 'title is-4', '</article>')
+        # if (searchResults == ''):
+        #     Logging('@@@ Update content search result failed2','Error')
+        #     return 0
+        # Logging(searchResults)
+
+        Logging('#### javlibrary 제목 시작####', 'Info')
+        id= String_slice(media.title,'[',']').upper()
+        nTitle = String_slice(searchResults, "rel='bookmark' >", '</a>').replace(id,'')
+        metadata.original_title = nTitle
+        self.func_update_title(metadata, media, id, nTitle, ncroling, 'ja')
+        Logging('#### javlibrary 제목 종료 ####', 'Info')
+
+        # 스튜디오=> 제조사
+        try:
+            Logging('=======  Maker Info start =========','Info')
+            sTemp = String_slice(searchResults, 'メーカー', '</tr>')
+            sTemp = String_slice(sTemp, 'rel="tag">', '</a>')
+            metadata.studio = sTemp
+            metadata.studio = Papago_Trans(str(metadata.studio), 'ja')
+            Logging('Maker: ' + str(metadata.studio),'Debug')
+            Logging('=======  Maker Info end =========','Info')
+        except:
+            Logging('@@@ Studio failed','Error')
+
+        # 감독
+        try:
+            Logging('=======  Director Info start =========','Info')
+            # sTemp = String_slice(searchResults, '導演', '<p>')
+            sTemp = Extract_str(searchResults, '監督', '</tr>')
+            director_info = sTemp
+            Logging('Director: ','Info')
+            Logging(director_info,'Info')
+            if (director_info != ''):
+                director_info_ko = Papago_Trans(director_info[0], 'ja')
+                Logging('Director: ' + director_info_ko,'Debug')
+                metadata.directors.clear()
+                try:
+                    meta_director = metadata.directors.new()
+                    meta_director.name = director_info_ko
+                except:
+                    try:
+                        metadata.directors.add(director_info_ko)
+                    except:
+                        pass
+            Logging('=======  Director Info end =========','Info')
+        except:
+            Logging('@@@ Director failed','Error')
+
+        # 일자 표시(미리보기, 원출처) 제품발매일:商品発売日 전달개시일:配信開始日
+        try:
+            Logging('=======  Date Info start =========','Info')
+            if (searchResults.find('発売日') <> -1):
+                nYear = String_slice(searchResults, '発売日', '</tr>')
+                nYear = String_slice(nYear, '<td class="text">', '</td>')
+                Logging(nYear,'Debug')
+                nYearArray = nYear.split('-')
+                # 미리보기 항목의 이미지 아래 표시되는 년도
+                metadata.year = int(nYearArray[0])
+                # 상세항목의 '원출처' 일자
+                metadata.originally_available_at = datetime.strptime(nYear, '%Y-%m-%d')
+            Logging('=======  Date Info end =========','Info')
+        except:
+            Logging('@@@ Date Failed','Error')
+
+        # 줄거리(javlibrary는 줄거리 없음)
+        if (str(Prefs['searchsiteinfo']) == 'True'): metadata.summary = '[javlibrary]'
+
+        # 국가
+        metadata.countries.clear()
+        metadata.countries.add(Papago_Trans('Japan').replace('.',''))
+
+        # 장르
+        try:
+            Logging('=======  Genre Info start =========','Info')
+            metadata.roles.clear()
+            nGenreName = Extract_str(searchResults, 'ジャンル', '</tr>')
+            j = len(nGenreName)
+            for i in range(0, j):
+                role = metadata.roles.new()
+                # nGenreName[i] = nGenreName[i].replace('.', '')
+                nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.','')
+                Logging(nGenreName[i],'Debug')
+                Logging(nGenreName_ko,'Debug')
+                metadata.genres.add(nGenreName_ko)
+            Logging('=======  Genre Info end =========','Info')
+        except:
+            Logging('@@@ Genre failed','Error')
+
+        # 배우정보
+        Logging('=======  Actor Info end =========','Info')
+        metadata.roles.clear()
+        nActorName=Extract_str(searchResults,'出演者', '</tr>')
+        # Logging('===================')
+        Logging(nActorName,'Debug')
+        if (nActorName is not None):
+            j=len(nActorName)
+            for i in range(0,j):
+                role = metadata.roles.new()
+                # if (nActorName[i].find('(') > -1): nActorName = nActorName[i][0:nActorName[i].find('(')]
+                nTemp=nActorName[i]
+                if (nTemp.find('(') <> -1) : nTemp=nTemp[0:nTemp.find('(')]
+                nActorInfo = Get_actor_info(nTemp)
+                role.photo = nActorInfo[0]
+                role.name = nActorInfo[1]
+        Logging('=======  Actor Info end =========','Info')
+
+        # Posters
+        Logging('=======  Poster Info start =========','Info')
+        try:
+            posterURL_Small = String_slice(searchResults, 'video_jacket_img" src="', '"').replace("pl.","ps.")
+            posterURL_Small = 'http:' + posterURL_Small
+            # posterURL_Small = Extract_imgurl(searchResults, '<div class="previewthumbs"', '</div>', 'src')
+            Logging("small Poster URL / 포스터 주소 : " + posterURL_Small,'Debug')
+            try:
+                if(posterURL_Small <>'' or posterURL_Small <> '#preview-video'):
+                    metadata.posters[posterURL_Small] = Proxy.Preview(HTTP.Request(posterURL_Small, timeout=int(Prefs['timeout'])), sort_order=1)
+            except:	Logging(' Can not load Small Poster','Error')
+            Logging('=======  Poster Info end =========','Info')
+        except:
+            Logging('@@@ Poster Failed','Error')
+
+        #background images
+        try:
+            Logging('=======  Background Info start =========','Info')
+            nBgackgroundimg=Extract_imgurl(searchResults, '<div class="previewthumbs"', '</div>','src')
+            j = len(nBgackgroundimg)
+            if (j <> -1):
+                imgcnt = int(Prefs['img_cnt'])
+                Logging('설정파일에 설정된 배경파일 받을 이미지 개수: ','Debug')
+                Logging(imgcnt,'Debug')
+                if (imgcnt <= j):
+                    j = imgcnt
+                    if (nBgackgroundimg[0] == '../img/player.gif'): j = imgcnt+1 #첫 이미지가 불필요한 이미지면 두번째 부터 받기위해 1 추가
+                Logging(j, 'Debug')
+                for i in range(0, j):
+                    bgimg = 'http:' + nBgackgroundimg[i]
+                    Logging('배경화면 이미지 주소: ','Debug')
+                    Logging(bgimg,'Debug')
+                    try:
+                        if(bgimg <>''):
+                            metadata.art[bgimg] = Proxy.Preview(
+                            HTTP.Request(bgimg, headers={'Referer': 'http://www.google.com'}, timeout=int(Prefs['timeout'])).content, sort_order=i + 1)
+                    except:
+                        Logging('@@@' + bgimg + ' Can not load','Error')
+
+            Logging('=======  Background Info end =========','Info')
+        except:
+            Logging('@@@ Background Image failed','Error')
+
+        # # Series 정보(plex에는 seires 항목이 없으므로 '주제' 항목에 이 값을 넣음)
+        # try:
+        #     Logging('=======  Series Info start =========','Info')
+        #     # Logging('######## series info')
+        #     # Logging(sTemp)
+        #     series_info = Extract_str(searchResults, '系列', '</div>')
+        #     # Logging(series_info,'Debug')
+        #     # Logging('SeriesInfo: ' + series_info)
+        #     if (series_info is not None):
+        #         if (series_info[0] <> '----'):
+        #             series_info_ko = Papago_Trans(series_info[0], 'ja')
+        #             Logging(series_info_ko,'Debug')
+        #             metadata.tagline = series_info_ko
+        #     else:
+        #         Logging('Series info not found','Error')
+        #     Logging('=======  Series Info end =========','Info')
+        # except:
+        #     Logging('@@@ Series failed','Error')
+
+        # studio 컬렉션 생성
+        try:
+            if (str(Prefs['create_collection_studio']) == 'True'):
+                if metadata.studio != None:
+                    metadata.collections.add(metadata.studio)
+                    Logging(' metadata.collections studio: ' + str(metadata.studio), 'Debug')
+            else:
+                Logging('### Studio 컬렉션 생성 안함(설정 미체크) / Studio connection not create(prefrence not check ###','Info')
+        except:
+            Logging('@@@ Studio collection failed','Error')
+
+        # series 컬렉션 생성
+        try:
+            if (str(Prefs['create_collection_series']) == 'True'):
+                if metadata.tagline != None:
+                    metadata.collections.add(metadata.tagline)
+                    Logging(' metadata.collections series: ' + str(metadata.tagline),'Debug')
+            else:
+                Logging('### series 컬렉션 생성 안함(설정 미체크) Series connection not create(prefrence not check ###','Info')
+
+            Logging('******* javlibrary 미디어 업데이트 완료/Media Update completed ****** ','Info')
 
         except:
             Logging('@@@ Series collection failed','Error')
