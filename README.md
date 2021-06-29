@@ -7,7 +7,7 @@ PLEX용 Japan Adule Video Metadata scraper입니다.
 2. r18.com
 3. javbus.com
 4. pornav.co => 일부 컨텐츠는 포스터 자리에 동영상이 있어 포스터가 나오지 않을 수 있음
-5. javdb.com => 최근 성인인증 추가로 인해 접속 
+5. javdb.com => 최근 성인인증 추가로 인해 접속 불가
 6. javlibrary.com
 
 # 1. 설치방법
