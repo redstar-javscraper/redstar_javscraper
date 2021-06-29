@@ -223,7 +223,8 @@ def Get_search_url(SEARCH_URL, txt, reqMode='GET'):
             url = SEARCH_URL + encodedId
             Logging('SearchURL: ' + url, 'Info')
             req = urllib2.Request(url)
-            req.add_header('Cookie','age_check_done=1')
+            req.add_header('Cookie','age_check_done=1') #DMM의 성인인증
+            # req.add_header('Cookie', 'over18=1') #JavDB의 성인인증
             # req.add_header('age_check_done', '1')
             # req.add_header('Referer', SEARCH_URL)
             Logging('Cookie added(Age_check_done=1, to Cookie)', 'Info')
@@ -360,9 +361,9 @@ class redstar_javscraper(Agent.Movies):
         if (str(Prefs['pornav_use']) == 'True' and nResult == 0):
             nResult=self.pornav_search(results, media, lang)
             # Logging('pornav result: '  + str(nResult), 'Debug')
-        if (str(Prefs['javdb_use']) == 'True' and nResult == 0):
-            nResult=self.javdb_search(results, media, lang)
-            # Logging('javdb result: '  + str(nResult),'Debug')
+        # if (str(Prefs['javdb_use']) == 'True' and nResult == 0):
+        #     nResult=self.javdb_search(results, media, lang)
+        #     # Logging('javdb result: '  + str(nResult),'Debug')
         if (str(Prefs['javlibrary_use']) == 'True' and nResult == 0):
             nResult=self.javlibrary_search(results, media, lang)
             # Logging('javdb result: '  + str(nResult),'Debug')
@@ -410,9 +411,9 @@ class redstar_javscraper(Agent.Movies):
         elif (str(Prefs['pornav_use']) == 'True' and ((nSite == 'pornav')or (nSite == ' '))):
             nResult=self.pornav_update(metadata, media, lang, nOrgID,ncroling)
             # Logging('pornav result: ' + str(nResult), 'Debug')
-        elif (str(Prefs['javdb_use']) == 'True' and ((nSite == 'javdb')or (nSite == ' '))):
-            nResult=self.javdb_update(metadata, media, lang, nOrgID,ncroling)
-            # Logging('javdb result: ' + str(nResult), 'Debug')
+        # elif (str(Prefs['javdb_use']) == 'True' and ((nSite == 'javdb')or (nSite == ' '))):
+        #     nResult=self.javdb_update(metadata, media, lang, nOrgID,ncroling)
+        #     # Logging('javdb result: ' + str(nResult), 'Debug')
         elif (str(Prefs['javlibrary_use']) == 'True' and ((nSite == 'javlibrary')or (nSite == ' '))):
             nResult=self.javlibrary_update(metadata, media, lang, nOrgID,ncroling)
             # Logging('javdb result: ' + str(nResult), 'Debug')
@@ -450,9 +451,6 @@ class redstar_javscraper(Agent.Movies):
         ##############################
 
         Logging('##### Start dmm video search #####','Info')
-        # SEARCH_URL = 'https://www.dmm.co.jp/age_check/=/declared=yes/?rurl='
-        # SEARCH_URL = SEARCH_URL + 'http%3A%2F%2Fwww.dmm.co.jp%2Fdigital%2Fvideoa%2F-%2Flist%2Fsearch%2F%3D%2F%3Fsearchstr%3D'
-        # SEARCH_URL = 'https://www.dmm.co.jp/age_check/=/declared=yes/?rurl=http%3A%2F%2Fwww.dmm.co.jp%2Fdigital%2Fvideoa%2F-%2Flist%2Fsearch%2F%3D%2F%3Fsearchstr%3D'
         SEARCH_URL = 'https://www.dmm.co.jp/digital/videoa/-/list/search/=/?searchstr='
         Logging('Media input title: ' + media.name,'Debug')
 
@@ -739,13 +737,28 @@ class redstar_javscraper(Agent.Movies):
 
         Logging('******* javdb Video 검색 시작(Media search start) ****** ','Info')
         Logging("### Release ID:    " + str(release_id) + ' org_id: ' + str(org_id),'Info')  # Release ID: IPZ00929 org_id: IPZ-929
-        # searchResults = Get_search_url(SEARCH_URL + '&f=all', release_id)
+
+        # searchResults = Get_search_url(SEARCH_URL, release_id)
+        # Logging("SearchResult: " + str(searchResults),'Debug')
+
+        # searchResults = HTML.ElementFromURL(SEARCH_URL + release_id)
+        # # header = {'Cookie': 'over18=1'}
+        # # searchResults = HTTP.Request(SEARCH_URL + release_id).content
+        # Logging(searchResults, "Debug")
 
         try:
-            searchResults = HTTP.Request(SEARCH_URL + release_id + '&f=all').content
+            # 헤더나 쿠키를 추가할 경우 아래 참조
+            # headers = {'Content-Type': 'application/json; charset=utf-8'}
+            # cookies = {'session_id': 'sorryidontcare'}
+            # res = requests.get(URL, headers=headers, cookies=cookies)
+
+            # header = {'Cookie': 'over18=1'}
+            searchResults = HTTP.Request(SEARCH_URL + release_id, headers = header).content
+            # Logging(searchResults,"Debug")
         except:
             Logging( 'javdb search exception','Error')
             return 0
+
         if (searchResults <> ''):
             nResult = searchResults.find('div class="empty-message"') #검색결과 없음
             # Logging(searchResults)
