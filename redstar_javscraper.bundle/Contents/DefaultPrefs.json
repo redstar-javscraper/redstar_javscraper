@@ -24,12 +24,6 @@
 		"default": "true"
 	},
 	{
-		"id": "javdb_use",
-		"label": "javdb.com 검색여부(Default 사용)",
-		"type": "bool",
-		"default": "true"
-	},
-	{
 		"id": "javlibrary_use",
 		"label": "javlibrary 검색여부(Default 사용)",
 		"type": "bool",
