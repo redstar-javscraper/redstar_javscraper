@@ -338,7 +338,7 @@ class redstar_javscraper(Agent.Movies):
         Logging('option check r18: ' + str(Prefs['r18_use']),'Info')
         Logging('option check javbus: ' + str(Prefs['javbus_use']),'Info')
         Logging('option check pornav: ' + str(Prefs['pornav_use']),'Info')
-        Logging('option check javdb: ' + str(Prefs['javdb_use']),'Info')
+        # Logging('option check javdb: ' + str(Prefs['javdb_use']),'Info')
         Logging('option check javlibrary: ' + str(Prefs['javlibrary_use']), 'Info')
 
         amateur = True
