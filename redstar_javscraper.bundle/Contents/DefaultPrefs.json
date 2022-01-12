@@ -1,0 +1,113 @@
+[
+	{
+		"id": "dmm_use",
+		"label": "dmm.co.jp 검색여부(Default 미 사용, VPN 우회 필요)",
+		"type": "bool",
+		"default": "false"
+	},
+	{
+		"id": "r18_use",
+		"label": "R18.com 검색여부(Default 사용)",
+		"type": "bool",
+		"default": "true"
+	},
+	{
+		"id": "javbus_use",
+		"label": "JavBus 검색여부(Default 사용)",
+		"type": "bool",
+		"default": "true"
+	},
+	{
+		"id": "pornav_use",
+		"label": "PornAV 검색여부(FC2, Tokyohot등)(Default 사용)",
+		"type": "bool",
+		"default": "true"
+	},
+	{
+		"id": "javdb_use",
+		"label": "javdb 검색여부(Default 사용)",
+		"type": "bool",
+		"default": "true"
+	},
+	{
+		"id": "javlibrary_use",
+		"label": "javlibrary 검색여부(Default 사용)",
+		"type": "bool",
+		"default": "true"
+	},
+
+	{
+		"id": "seprater1",
+		"label": "-----------------------------------------------------------",
+		"type": "bool",
+		"default": "false"
+	},
+  	{
+		"id": "papago_use",
+		"label": "파파고 한글번역 사용하기(아래 API Key 입력 필수)",
+		"type": "bool",
+		"default": "true"
+	},
+  	{
+		"id": "papagokey",
+		"label": "파파고 번역용 API Key(id,Secret ID2,Secret2 구분자:공백)",
+		"type": "text",
+		"default": ""
+	},
+	{
+		"id": "timeout",
+		"label": "응답 타임아웃 시간 지정(Default 20s)",
+		"type": "text",
+		"default": "20"
+	},
+	{
+		"id": "img_cnt",
+		"label": "다운로드할 배경 이미지 개수 설정(많으면 속도 저하)",
+		"type": "enum",
+		"values": ["1", "2", "3", "5", "10", "99"],
+		"default": "1"
+	},
+	{
+		"id": "searchsiteinfo",
+		"label": "일치된 컨텐츠 검색 사이트 정보를 '요약'에 추가",
+		"type": "bool",
+		"default": "true"
+	},
+	{
+		"id": "uncensored_class",
+		"label": "체크시 파일명에 'UNC,노모' 있으면 컨텐츠 등급에 '노모' 표기",
+		"type": "bool",
+		"default": "true"
+	},
+	{
+		"id": "filenametotitle",
+		"label": "체크시 파일명에 타이틀이 포함된 경우 웹 크롤링 대신 파일명 타이틀을 제목으로 사용",
+		"type": "bool",
+		"default": "false"
+	},
+	{
+		"id": "loglevel",
+		"label": "에이전트의 로그레벨 설정(Error < Info < Debug)",
+		"type": "enum",
+		"values": ["Error", "Info", "Debug"],
+		"default": "Error"
+	},
+	{
+		"id": "seprater2",
+		"label": "-----------------------------------------------------------",
+		"type": "bool",
+		"default": "false"
+	},
+	{
+		"id": "create_collection_studio",
+		"label": "studio로 컬렉션 만들기(Default 미사용)",
+		"type": "bool",
+		"default": "false"
+	},
+	{
+		"id": "create_collection_series",
+		"label": "Series로 컬렉션 만들기(Default 미사용)",
+		"type": "bool",
+		"default": "false"
+	}
+]
