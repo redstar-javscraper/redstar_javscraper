@@ -159,17 +159,6 @@ def String_slice(nStr,nStartstr,nEndstr):
     nResult = nStr[nStartstr:nEndstr].strip() # .strip()하면 개행문자를 모두 제거해줌
     return nResult
 
-# def ExtractFromHtml(startstr,endstr,txt):
-#  # startstr ~ endstr 사이의 문자열 추출
-#  # <tr><b>가나다</b></tr> 일때 문자열만 추출함
-#  # 값이 없으면 공백 리턴 ''
-#   try:
-#     extractstr = re.search(startstr + '(.+?)' + endstr, txt).group(1)
-#     sTemp = re.sub('<.+?>', '', extractstr, 0, re.I|re.S)
-#     return sTemp
-#   except AttributeError:
-#     return ''
-
 def Extract_str(nStr,nStartstr,nEndstr):
     # nStr: 원본 문자열
     # nStartstr: 시작 문자열
@@ -312,6 +301,134 @@ def Extract_imgurl(nStr,nStartstr,nEndstr,hreforsrc='src'):
             return nResult
     return #Return 결과는 None
 
+def Search_Category(txt):
+
+    if (str(Prefs['papago_use']) == 'False'):
+        Logging('### 파파고 사용 안함 체크됨(Papago Not use checked) ###','Debug')
+        return txt
+
+    ## 미리 정의한 카테고리를 검색해 해당 한글을 리턴
+    category = {u'アイドル':u'우상',u'芸能人':u'연예인',u'アクメ・オーガズム':u'아크메・오르가즘',u'アスリート':u'운동선수',u'アニメキャラクター':u'애니 캐릭터',
+                u'姉・妹':u'누나・동생',u'イタズラ':u'장난',u'インストラクター':u'강사',u'ウェイトレス':u'웨이트리스',u'受付嬢':u'접수원',u'エステ':u'에스테 살롱',
+                u'M男':u'마조히스트 남',u'M女':u'마조히스트 여',u'OL':u'오피스 레이디',u'お母さん':u'밀프',u'女将・女主人':u'마담, 여주인',u'幼なじみ':u'소꿉친구',
+                u'お爺ちゃん':u'할아버지',u'お嬢様・令嬢':u'아가씨, 영애',u'オタク':u'오타쿠',u'オナサポ':u'자위 도우미',u'お姉さん':u'누나',u'お婆ちゃん':u'할머니',
+                u'叔母さん':u'이모',u'お姫様':u'공주님',u'お風呂':u'목욕',u'温泉':u'온천',u'女教師':u'여교사',u'女上司':u'여상사',u'女戦士':u'여전사',u'女捜査官':u'여수사관',
+                u'カーセックス':u'카섹스',u'格闘家':u'무도가',u'カップル':u'커플',u'家庭教師':u'가정교사',u'看護婦・ナース':u'간호사',u'キャバ嬢・風俗嬢':u'업소녀',
+                u'キャンギャル':u'캠패인 걸',u'近親相姦':u'근친상간',u'義母':u'시어머니',u'逆ナン':u'역헌팅',u'ギャル':u'갸루',u'くノ一':u'여닌자',u'コンパニオン':u'동반자',
+                u'極道・任侠':u'야쿠자',u'シスター':u'자매',u'主観':u'주관',u'職業色々':u'다양한 직업',u'ショタ':u'쇼타',u'白目・失神':u'백안, 실신',u'時間停止':u'시간정지',
+                u'熟女':u'숙녀',u'女医':u'여의사',u'女王様':u'여왕님',u'女子アナ':u'여아나운서',u'女子校生':u'여학생',u'女子大生':u'여대생',u'スチュワーデス':u'스튜어디스',
+                u'スワッピング・夫婦交換':u'부부교환',u'性転換・女体化':u'성전환, 여체화',u'セレブ':u'연예인',u'チアガール':u'치어리더',u'痴女':u'치녀',u'ツンデレ':u'쓴데레',
+                u'デート':u'데이트',u'盗撮・のぞき':u'도/촬, 엿보기',u'ドール':u'인형',u'寝取り':u'네토리',u'寝取られ':u'네토라레',u'NTR':u'NTR',u'ノーパン':u'노팬티',
+                u'ノーブラ':u'노브라',u'飲み会・合コン':u'회식, 미팅',u'ハーレム':u'하렘',u'花嫁':u'신부',u'バスガイド':u'버스 투어 가이드',u'秘書':u'비서',u'人妻':u'유부녀',
+                u'主婦':u'주부',u'ビッチ':u'빗치',u'病院':u'병원',u'クリニック':u'클리닉',u'ファン感謝':u'팬감사',u'訪問':u'방문',u'不倫':u'불륜',u'部活':u'동아리활동',
+                u'マネージャー':u'매니저',u'部下':u'부하',u'同僚':u'동료',u'ヘルス・ソープ':u'건강비누',u'変身ヒロイン':u'변신',u'ホテル':u'호텔',u'マッサージ':u'마사지',
+                u'魔法少女':u'마법소녀',u'ママ友':u'엄마친구',u'未亡人':u'미망인',u'娘・養女':u'딸, 양녀',u'胸チラ':u'은근슬젖',u'メイド':u'메이드',u'面接':u'면접',
+                u'モデル':u'모델',u'野外・露出':u'야외, 노출',u'ヨガ':u'요가',u'乱交':u'난교',u'旅行':u'여행',u'レースクィーン':u'레이스 여왕',u'若妻・幼妻':u'앳된 아내',
+                u'アジア女優':u'아시아 배우',u'AV女優':u'AV 여배우',u'巨尻':u'큰 엉덩이',u'巨乳':u'거유',u'筋肉':u'근육',u'小柄':u'작은 몸집',u'黒人男優':u'흑인',
+                u'処女':u'처녀',u'女装':u'여장남자',u'男の娘':u'낭자애',u'スレンダー':u'슬렌더',u'早漏':u'조루',u'そっくりさん':u'닮은꼴',u'長身':u'장신',u'超乳':u'초유',
+                u'デカチン':u'거근',u'巨根':u'거근',u'童貞':u'동정',u'軟体':u'연체',u'ニューハーフ':u'뉴-하프',u'妊婦':u'임신부',u'白人女優':u'백인',u'パイパン':u'백보지',
+                u'日焼け':u'태닝',u'貧乳':u'빈유',u'微乳':u'빈유',u'美少女':u'미소녀',u'美乳':u'미유',u'ふたなり':u'후타나리',u'ぽっちゃり':u'토실토실',u'ミニ系':u'미니계열',
+                u'学生服':u'학생복',u'競泳':u'학교수영복',u'スクール水着':u'학교 수영복',u'コスプレ':u'코스프레',u'ゴスロリ':u'고슬로리',u'セーラー服':u'세라복',u'制服':u'유니폼',
+                u'体操着':u'체육복',u'ブルマ':u'체육복',u'チャイナドレス':u'차이나 드레스',u'ニーソックス':u'니하이 삭스',u'ネコミミ':u'고양이 귀',u'獣系':u'동물계',
+                u'裸エプロン':u'알몸 앞치마',u'バニーガール':u'버니걸',u'パンスト・タイツ':u'타이즈 스타킹',u'ビジネススーツ':u'정장',u'覆面・マスク':u'복면',u'ボディコン':u'바디콘',
+                u'ボンテージ':u'본디지',u'巫女':u'무녀',u'水着':u'수영복',u'ミニスカ':u'미니스커트',u'ミニスカポリス':u'경찰 미니스커트',u'めがね':u'안경',u'ランジェリー':u'란제리',
+                u'ルーズソックス':u'헐렁한 양말',u'レオタード':u'레오타드',u'和服・浴衣':u'일본옷・유카타',u'アクション':u'액션',u'アクション・格闘':u'격투',u'脚フェチ':u'다리',u'アニメ':u'애니',
+                u'イメージビデオ':u'이미지 비디오',u'イメージビデオ(男性)':u'이미지 비디오 남자',u'淫乱・ハード系':u'음란・Hard계',u'学園もの':u'학원물',u'企画':u'기획물',
+                u'局部アップ':u'국부/음부 확대',u'巨乳フェチ':u'거유 패티시',u'ギャグ・コメディ':u'게이・코미디',u'クラシック':u'클래식',u'ゲイ':u'게이',u'原作コラボ':u'오리지널 콜라보레이션',
+                u'コラボ作品':u'콜라보레이션',u'サイコ・スリラー':u'싸이코',u'残虐表現':u'잔혹성',u'尻フェチ':u'엉덩이',u'素人':u'일반인',u'時代劇':u'사극',u'女性向け':u'여성향',
+                u'女優ベスト・総集編':u'여배우 BSET, 총집편',u'スポーツ':u'스포츠',u'セクシー':u'섹시',u'その他フェチ':u'기타 페티시',u'体験告白':u'체험고백',u'単体作品':u'단체작품',
+                u'ダーク系':u'다크 계',u'ダンス':u'춤',u'着エロ':u'착에로',u'デビュー作品':u'데뷔작',u'特撮':u'특수촬영',u'ドキュメンタリー':u'다큐멘터리',u'ドラマ':u'드라마',u'ナンパ':u'헌팅',
+                u'パンチラ':u'팬티',u'ファンタジー':u'판타지',u'復刻':u'복각',u'Vシネマ':u'V 시네마',u'ベスト・総集編':u'BEST, 총집편',u'ホラー':u'호러',u'ボーイズラブ':u'BL',u'妄想':u'망상',
+                u'洋ピン・海外輸入':u'서양 에로물',u'レズ':u'레즈비언',u'恋愛':u'연애',u'足コキ':u'풋 잡',u'汗だく':u'땀투성이',u'アナル':u'아날',u'アナルセックス':u'아날 섹스',
+                u'異物挿入':u'이물삽입',u'イラマチオ':u'딥 쓰롯',u'淫語':u'음담',u'飲尿':u'인뇨',u'男の潮吹き':u'남자 분수',u'オナニー':u'자위',u'おもちゃ':u'장난감',u'監禁':u'감금',
+                u'浣腸':u'관장',u'顔射':u'얼싸',u'顔面騎乗':u'안면승마',u'騎乗位':u'기승위',u'キス・接吻':u'키스',u'鬼畜':u'귀축',u'くすぐり':u'간지럼',u'クスコ':u'질경',
+                u'クンニ':u'커널링구스',u'ゲロ':u'구토',u'拘束':u'구속',u'拷問':u'고문',u'ごっくん':u'정액',u'潮吹き':u'시오후키',u'シックスナイン':u'69',u'縛り・緊縛':u'긴박',
+                u'羞恥':u'수치',u'触手':u'촉수',u'食糞':u'식분-스캇물',u'スカトロ':u'스캇',u'スパンキング':u'스팽킹',u'即ハメ':u'바로 섹스',u'脱糞':u'탈분 스캇물',u'手コキ':u'핸드잡',
+                u'ディルド':u'딜도',u'電マ':u'전동 마사지기',u'ドラッグ':u'약',u'中出し':u'질내사정',u'辱め':u'치욕',u'鼻フック':u'코 후크',u'ハメ撮り':u'셀프 촬영',u'孕ませ':u'임신섹스',
+                u'バイブ':u'바이브레터',u'バック':u'뒤',u'罵倒':u'매도',u'パイズリ':u'파이즈리',u'フィスト':u'주먹',u'フェラ':u'펠라치오',u'ぶっかけ':u'붓카케',u'放置':u'방치',
+                u'放尿・お漏らし':u'방뇨',u'母乳':u'모유',u'ポルチオ':u'포루치오(P-Spot)',u'指マン':u'유비만(Fingering)',u'ラブコメ':u'러브 코미디',u'レズキス':u'레즈비언 키스',
+                u'ローション・オイル':u'로션・오일',u'ローター':u'로터',u'蝋燭':u'양초',u'ギリモザ':u'기리모자',u'スマホ推奨縦動画':u'세로영상',u'3D':u'3D',u'4K':u'4K',u'4P':u'4P',u'3P':u'3P',
+                u'R-15': u'R-15', u'お笑い・コント・漫才': u'코미디, 콘토, 만재', u'キャンペーンガール': u'캠페인 소녀', u'競泳・スクール水着': u'수영・학교 수영복',
+                u'クッキング': u'쿠킹', u'グラビア': u'그라비아', u'声優': u'성우', u'セクシー女優': u'섹시 여배우', u'トーク': u'토크',u'ドキュメンタリー': u'다큐멘터리',
+                u'独占配信': u'독점 배달', u'ネコミミ・獣系': u'고양이 미미・짐승시스템',u'ハイクオリティVR': u'고품질 VR', u'ハイビジョン': u'고화질', u'韓流': u'한류',
+                u'バラエティ': u'버라이어티', u'ヒーロー・ヒロイン': u'영웅 히로인',u'美尻': u'예쁜 힙', u'VR専用': u'VR 전용',u'4時間以上作品': u'4시간 이상 작품',
+                u'デジタル最新作': u'디지털 최신작', u'成人作品': u'성인 작품',u'期間限定50％OFF☆':u'기간한정50％세일☆',u'イメージビデオ':u'이미지 비디오',u'着エロ':u'착용',
+                u'アイドル・芸能人':u'아이돌・연예인',u'双葉社30％OFF第1弾':u'후타바사30%세일 제1탄',u'デジモ':u'디지털 모자이크(약모)',u'野外・露出':u'야외・노출',
+                u'寝取り・寝取られ・NTR':u'빼앗고・뺏기기・NTR',u'3P・4P':u'3P・4P',u'高畫質':u'고화질',u'バック':u'뒷치기(체위)',u'吊り橋':u'현수교(체위)', u'正常位': u'정상위(체위)',
+                u'深山': u'깊은 산(체위)', u'開脚正常位': u'발 정상 위치 열기(체위)', u'反り正常位': u'변형 정상위(체위)', u'密着正常位': u'정상 위치에 가까움(체위)', u'手繋ぎ正常位': u'손 종합 정상위(체위)',
+                u'抱きつき正常位': u'달라 붙어 정상위(체위)', u'脚閉じ正常位': u'다리 닫 정상위(체위)', u'自分で動く正常位': u'스스로 움직이는 정상위(체위)', u'背面騎乗位': u'후면 카우걸(체위)',
+                u'四つん這い背面騎乗位': u'네발 후면 카우걸(체위)', u'エロい腰振り騎乗位': u'야한 허리 모습 기승 정도(체위)',u'撞木反り': u'당목 휘어짐(체위)',u'腰振り背面騎乗位': u'허리 모습 후면 카우걸(체위)',
+                u'腰振り騎乗位': u'허리 모습 기승 정도(체위)',u'騎乗位': u'카우걸(체위)',u'またがり騎乗位': u'또한 공부 카우걸(체위)',u'エロい背面騎乗位': u'야한 후면 카우걸(체위)',
+                u'エロい騎乗位': u'야한 카우걸(체위)', u'グラインド騎乗位': u'그라인드 카우걸(체위)',u'反り背面騎乗位': u'변형 후면 카우걸(체위)',u'反り騎乗位': u'변형 카우걸(체위)',
+                u'密着騎乗位': u'밀착 카우걸(체위)',u'手繋ぎ騎乗位': u'손 종합 카우걸(체위)', u'杭打ち背面騎乗位': u'말뚝 박기 후면 카우걸(체위)'
+                }
+
+    if txt <> '':
+        nret = txt.replace(' ', '').upper().decode('utf8')  # 문자열 공백 제거
+        Logging('로컬에서 찾을 카테고리명: ' + nret, 'Info')
+        if nret in category:
+            nret = category[nret]
+            Logging('로컬에서 찾았습니다! : ' + nret,'Info')
+            return nret
+    Logging(' @@@ 로컬에서 카테고리 못찾음 검색어: '+ txt, 'Debug')
+    return txt
+
+def Search_Label(txt):
+
+    if (str(Prefs['papago_use']) == 'False'):
+        Logging('### 파파고 사용 안함 체크됨(Papago Not use checked) ###','Debug')
+        return txt
+    
+    ## 미리 정의한 레이블명을 검색해 레이블에 해당하는 한글을 리턴함
+    label = {u'Aircontrol': u'에어컨트롤', u'アリスJAPAN': u'엘리스 재팬', u'ALICEJAPAN': u'엘리스 재팬', u'ATTACKERS': u'어택커즈', u'アタッカーズ': u'어택커즈',
+             'BabyEntertainment': u'베이비 엔터테인먼트', u'BeFree': u'비프리', u'ビーフリー': u'비프리', u'痴女ヘブン': u'색녀천국',
+             'ChijyoHEAVEN': u'색녀천국', u'DANDY&COSMOS': u'댄디&코스모스', u'ダスッ!': u'다스', u'DAS': u'다스', "DEEP'S": '딥스',
+             'DOC(DIGITALOPTICALCREATE)': u'독', u'DIGITALOPTICALCREATE': u'독', u'E-BODY': u'이-바디', u'FALENO': u'팔레노',
+             'FAプロ': u'FA프로', u'Fitch': u'피치', u'フィッチ': u'피치', u'G-AREA&PERFECT-G': u'G-애리어&퍼펙트-G', u'GIGA': u'기가',
+             'GLORYQUEST': u'글로리 퀘스트', u'グローリークエスト': u'글로리 퀘스트', u'H.M.P': u'H.M.P', u'変態紳士倶楽部': u'헨타이 신사 클럽',
+             'HENTAISHINSHICLUB': u'헨타이 신사 클럽', u'HHHGroup': u'HHH그룹', u'Hunter': u'HHH그룹', u'HunterBlack': u'HHH그룹',
+             'ROYAL': u'HHH그룹', u'お夜食カンパニー': u'HHH그룹', u'Apache': u'HHH그룹', u'AtoM': u'HHH그룹', u'ゴールデンタイム': u'HHH그룹',
+             'GOLDENTIME': u'HHH그룹', u'HIBINO': u'히비노', u'ヒビノ': u'히비노', u'HimeMix': u'히메믹스', u'ひよこ': u'히요코', u'hiyoko': u'히요코',
+             '本中': u'혼나카', u'HONNAKA': u'혼나카', u'IENERGY': u'아이에너지', u'アイエナジー': u'아이에너지', u'IDEAPOCKET': u'아이디어포켓',
+             u'アイデアポケット': u'아이디어 포켓', u'kawaii*': u'카와이', u'kawaii': u'카와이', u'kingdom': u'킹덤', u'KMP': u'KM프로듀스',
+             'ケイ・エム・プロデュース': u'KM프로듀스', u'Aver': u'KM프로듀스', u'KMPPREMIUM': u'KM프로듀스', u'Million': u'KM프로듀스',
+             'Millionミント(mint)': u'KM프로듀스', u'宇宙企画': u'KM프로듀스', u'REAL': u'KM프로듀스', u'SCOOP': u'KM프로듀스', u'BAZOOKA': u'KM프로듀스',
+             'S級素人': u'KM프로듀스', u'エロガチャ(EROGACHA)': u'KM프로듀스', u'ヒメゴト': u'KM프로듀스', u'サロメ(SALOME)': u'KM프로듀스', u'300': u'KM프로듀스',
+             '3000': u'KM프로듀스', u'俺の素人': u'KM프로듀스', u'僕たち男': u'KM프로듀스', u'EDGE': u'KM프로듀스', u'ナンパHEAVEN': u'KM프로듀스',
+             'おかず。': u'KM프로듀스', u'UMANAMI': u'KM프로듀스', u'Nadeshiko': u'KM프로듀스', u'100人': u'KM프로듀스', u'マダムス': u'마담스',
+             'Madames': u'마담스', u'FS.KnightsVisual': u'FS나이트비주얼', u'Madonna': u'마돈나', u'マドンナ': u'마돈나', u'MAXING': u'맥싱',
+             '未満': u'미만', u'MIMAN': u'미만', u'MOODYZ': u'무디즈', u'ムーディーズ': u'무디즈', u'妄想族': u'망상족', u'Mousouzoku': u'망상족',
+             'ANNEX(無言)/妄想族': u'망상족', u'ABC/妄想族': u'망상족', u'AVScollector’s': u'망상족', u'かぐや姫Pt/妄想族': u'망상족',
+             'ティーチャー/妄想族': u'망상족', u'ブロッコリー/妄想族': u'망상족', u'山と空/妄想族': u'망상족', u'Mr.Michiru': u'미스터 미칠', u'ミスターミチル': u'미스터 미칠',
+             'MUTEKI': u'무테키', u'舞ワイフ': u'마이 와이프', u'mywife': u'마이 와이프', u'AROUND': u'마이 와이프', u'ながえSTYLE': u'나가에 스타일',
+             'NAGAE STYLE': u'나가에 스타일', u'ナンパJAPAN': u'남파 재팬', u'NANPA-JAPAN': u'남파 재팬', u'NATURALHIGH': u'내추럴 하이',
+             'ナチュラルハイ': u'내추럴 하이', u'OPPAI': u'오파이', u'おっぱい': u'오파이', u'ORGA': u'올가', u'オルガ': u'올가', u'素人onlyプラム': u'플럼',
+             'Plum': u'플럼', u'pornograph.tv': u'포르노그래피.TV', u'PREMIUM': u'프리미엄', u'プレミアム': u'프리미엄', u'PRESTIGE': u'프래스티지',
+             'プレステージ': u'프래스티지', u'RADIX': u'래딕스', u'REbecca': u'레베카', u'ROCKET': u'로켓', u'ルビー': u'루비', u'Ruby': u'루비',
+             'S1(S1NumberOneStyle)': u'S1 넘버원 스타일', u'エスワン ナンバーワンスタイル': u'S1 넘버원 스타일', u'S1': u'S1 넘버원 스타일',
+             'SADISTICVILLAGE': u'사디스틱 빌리지', u'サディスティックヴィレッジ': u'사디스틱 빌리지', u'S-Cute': u'S-큐트', u'SILKLABO': u'실크라보',
+             'SOD(SOFTONDEMAND)': u'소프트 온 디멘드', u'ソフトオンデマンド': u'소프트 온 디멘드', u'SOD': u'소프트 온 디멘드', u'SOSORU×GARCON': u'소소루x가르콘',
+             '溜池ゴロー': u'다마이케 고로', u'tameikegoro': u'다마이케 고로', u'タカラ映像': u'타카라 비주얼', u'TAKARA VISUAL': u'타카라 비주얼', u'鉄板': u'철판',
+             'TEPPAN': u'철판', u'TMA(TotalMediaAgency)': u'토탈 미디어 에이전시', u'TMA': u'토탈 미디어 에이전시', u'I.B.WORKS': u'토탈 미디어 에이전시',
+             'TOKYO247': u'도쿄247', u'VENUS': u'비너스', u'WAAPGROUP': u'WAAP그룹', u'WAAP': u'WAAP그룹', u'DREAMTICKET': u'WAAP그룹',
+             'NON': u'WAAP그룹', u'光夜蝶': u'WAAP그룹', u'WANZFACTORY': u'완즈 팩토리', u'ワンズファクトリー': u'완즈 팩토리', u'天然むすめ': u'천연 무스메',
+             '10musume': u'천연 무스메', u'1pondo': u'1폰도', u'一本道': u'1폰도', u'Caribbeancom': u'캐리비안컴', u'カリビアンコム': u'캐리비안컴',
+             'エッチな4610': u'음란한4610', u'エッチな4610(H4610)': u'음란한4610', u'エッチな0930(H0930)': u'음란한4610',
+             '人妻斬り(C0930)': u'음란한4610', u'HEYZO': u'헤이조', u'FellatioJapan': u'펠라치오 재팬', u'HandjobJapan': u'핸드잡 재팬',
+             'LegsJapan': u'다리 재팬', u'金8天国': u'김8천국', u'kin8tengoku': u'김8천국', u'ムラムラ': u'무라무라', u'muramura': u'무라무라',
+             'パコパコママ': u'파코파코마마', u'pacopacomama': u'파코파코마마', u'しろハメ': u'시로-하메', u'SIRO-HAME': u'시로-하메', u'Heydouga': u'시로-하메',
+             'Heydouga4017': u'시로-하메', u'Tokyo-Hot': u'도쿄핫', u'東京熱': u'도쿄핫'}
+
+    if txt <> '':
+        nret = txt.replace(' ', '').upper().decode('utf8')  # 문자열 공백 제거
+        Logging('로컬에서 찾을 레이블명: ' + nret, 'Info')
+        if nret in label:
+            nret = label[nret]
+            Logging('레이블명을 찾았습니다! : ' + nret,'Info')
+            return nret
+    Logging('@@@ 로컬에서 레이블 못찾음 검색레이블:' + txt, 'Debug')
+    return txt
+
 def Start():
     HTTP.CacheTime = 0
 
@@ -331,6 +448,7 @@ def Get_actor_info(nEntity):
         if (nEntity == ''):
             return
         Logging('############# Actor Info from avdbs ##############', 'Info')
+        nEntity = nEntity.decode('utf8')
         Logging('검색할 배우명 : ' + nEntity,'Debug')
         Search_URL = 'https://www.avdbs.com/w2017/page/search/search_actor.php?kwd=' + nEntity#urllib2.quote(nEntity) #한글, 일어등은 quote 해줘야 함
         Logging('### search URL: =>' + Search_URL + '<=', 'Debug')
@@ -948,11 +1066,12 @@ class redstar_javscraper(Agent.Movies):
         Logging('******* javdb Video 검색 시작(Media search start) ****** ','Info')
         Logging("### Release ID:    " + str(release_id) + ' org_id: ' + str(org_id),'Info')  # Release ID: IPZ00929 org_id: IPZ-929
 
-        try:
-            searchResults = HTTP.Request(SEARCH_URL + release_id).content
-        except:
-            Logging( 'javdb search exception','Error')
-            return 0
+        # try:
+        searchResults = HTTP.Request(SEARCH_URL + release_id , Header = HDR_javdb).content
+        Log(searchResults)
+        # except:
+        #     Logging( 'javdb search exception','Error')
+        #     return 0
 
         if (searchResults <> ''):
             if 'rurl' in searchResults: # 18over 체킹 시도시.
@@ -1119,9 +1238,10 @@ class redstar_javscraper(Agent.Movies):
         sTemp = String_slice(searchResults, 'メーカー：', '</tr>').replace('width="100%">','')  # 스튜디오 정보
         Logging('자를원본:'+ sTemp,'Debug')
         sTemp = re.sub('<.+?>', '', sTemp, 0, re.I|re.S)
-        sTemp = Papago_Trans(sTemp, 'ja')
-        metadata.studio = sTemp
-        Logging(" dmm 스튜디오 정보: " + sTemp,'Info')
+        nStudio = Search_Label(sTemp)
+        if (sTemp == nStudio): nStudio = Papago_Trans(sTemp, 'ja')
+        metadata.studio = nStudio
+        Logging(" dmm 스튜디오 정보: " + nStudio,'Info')
         Logging('└────── dmm 스튜디오 종료 ──────┘', 'Info')
 
         # 감독
@@ -1148,32 +1268,30 @@ class redstar_javscraper(Agent.Movies):
         Logging('└────── dmm 감독 종료 ──────┘', 'Info')
 
         # 일자 표시(미리보기, 원출처) 제품발매일:商品発売日 전달개시일:配信開始日
-        # Logging('┌────── dmm 일자 시작 ──────┐', 'Info')
+        Logging('┌────── dmm 일자 시작 ──────┐', 'Info')
         # try:
-        #     if (searchResults.find('発売日') <> -1):
-        #         sTemp = String_slice(searchResults, '>配信', '</tr>')
-        #         # sTemp = ExtractFromHtml('発売日：', '</tr>',searchResults)
-        #     elif (searchResults.find('商品発売日') <> -1):
-        #         sTemp = String_slice(searchResults, '>商品', '</tr>')
-        #         # sTemp = ExtractFromHtml('>商品', '</tr>',searchResults)
-        #     elif (searchResults.find('配信開始日') <> -1):
-        #         sTemp = String_slice(searchResults, '>配信', '</tr>')
-        #         # sTemp = ExtractFromHtml('>配信', '</tr>',searchResults)
-        #     else:
-        #         sTemp = ''
-        #     if (sTemp <> ''):
-        #         nYear = String_slice(sTemp, '<td>', '</td>')
-        #         nYear=sTemp
-        #         nYearArray = nYear.split('/')
-        #         # 미리보기 항목의 이미지 아래 표시되는 년도
-        #         metadata.year = int(nYearArray[0])
-        #         # 상세항목의 '원출처' 일자
-        #         nYear = nYear.replace('/', '-')
-        #         metadata.originally_available_at = datetime.strptime(nYear, '%Y-%m-%d')
-        #         Logging('## 저장할 일자: ' + nYear)
+        if (searchResults.find('発売日') <> -1):
+            sTemp = String_slice(searchResults, '>配信', '</tr>')
+        elif (searchResults.find('商品発売日') <> -1):
+            sTemp = String_slice(searchResults, '>商品', '</tr>')
+        elif (searchResults.find('配信開始日') <> -1):
+            sTemp = String_slice(searchResults, '>配信', '</tr>')
+        else:
+            sTemp = ''
+        if (sTemp <> ''):
+            Log(sTemp)
+            nYear = String_slice(sTemp, '<td>', '</td>')
+            Log(nYear)
+            nYearArray = nYear.split('/')
+            # 미리보기 항목의 이미지 아래 표시되는 년도
+            metadata.year = int(nYearArray[0])
+            # 상세항목의 '원출처' 일자
+            nYear = nYear.replace('/', '-')
+            metadata.originally_available_at = datetime.strptime(nYear, '%Y-%m-%d')
+            Logging('## 저장할 일자: ' + nYear)
         # except:
         #     pass
-        # Logging('└────── dmm 일자 종료 ──────┘', 'Info')
+        Logging('└────── dmm 일자 종료 ──────┘', 'Info')
 
         # 국가
         metadata.countries.clear()
@@ -1200,14 +1318,11 @@ class redstar_javscraper(Agent.Movies):
         try:
             metadata.genres.clear()
             nGenreName = Extract_str(searchResults, 'ジャンル：', '</tr>')
-            # nGenreName = ExtractFromHtml('ジャンル：', '</tr>',searchResults)
             j = len(nGenreName)
             for i in range(0, j):
                 role = metadata.roles.new()
-                # nGenreName[i]=nGenreName[i].replace('.','')
-                nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.', '')
-                # Logging(nGenreName[i])
-                # Logging(nGenreName_ko)
+                nGenreName_ko = Search_Category(nGenreName[i])
+                if (nGenreName[i] == nGenreName_ko): nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.', '')
                 metadata.genres.add(nGenreName_ko)
         except:
             pass
@@ -1368,10 +1483,12 @@ class redstar_javscraper(Agent.Movies):
         try:
             for key, value in json_data['data']['maker'].items():
                 if (key == 'name'):
-                    Logging(value,'Info')
-                    nStudio = value
-                    nStudioTr = Papago_Trans(nStudio, 'en')
-                    metadata.studio = nStudioTr  # 스튜디오 정보
+                    # Logging(value,'Info')
+                    # nStudio = value
+                    nStudio = Search_Label(value)
+                    if (value == nStudio): nStudio = Papago_Trans(value, 'en')
+                    # nStudioTr = Papago_Trans(nStudio, 'en')
+                    metadata.studio = nStudio  # 스튜디오 정보
                     Logging('### 스튜디오 정보(ORG): ' + nStudio + ' 번역: ' + nStudioTr, 'Info')
         except:
             pass
@@ -1431,9 +1548,11 @@ class redstar_javscraper(Agent.Movies):
             if (nCategories is not None):
                 for categories in nCategories:
                     nGenre = categories['name']
-                    nGenreTr = Papago_Trans(nGenre, 'en')
-                    metadata.genres.add(nGenreTr)  # 스튜디오 정보
-                    Logging('### 장르 정보(ORG): ' + nGenre + ' 번역: ' + nGenreTr, 'Info')
+                    nGenreName_ko = Search_Category(nGenre)
+                    if (nGenre == nGenreName_ko): nGenreName_ko = Papago_Trans(nGenre, 'en').replace('.','')
+                    # nGenreTr = Papago_Trans(nGenre, 'en')
+                    metadata.genres.add(nGenreName_ko)  # 스튜디오 정보
+                    Logging('### 장르 정보(ORG): ' + nGenre + ' 번역: ' + nGenreName_ko, 'Info')
             else:
                 Logging('@@@ 장르 정보 없음 @@@', 'Info')
         except:
@@ -1578,8 +1697,10 @@ class redstar_javscraper(Agent.Movies):
         Logging('┌──────  Studio Info start ──────┐', 'Info')
         try:
             sTemp = String_slice(searchResults, '製作商', '</p>')
-            metadata.studio = String_slice(sTemp, '">', '</a')
-            metadata.studio = Papago_Trans(str(metadata.studio), 'ja')
+            sTemp = String_slice(sTemp, '">', '</a')
+            nStudio = Search_Label(sTemp)
+            if (sTemp == nStudio): nStudio = Papago_Trans(sTemp, 'ja')
+            metadata.studio = nStudio #Papago_Trans(str(metadata.studio), 'ja')
             Logging('Studio: ' + str(metadata.studio),'Info')
         except:
             Logging('@@@ Studio failed','Error')
@@ -1638,8 +1759,9 @@ class redstar_javscraper(Agent.Movies):
             j = len(nGenreName)
             for i in range(0, j):
                 role = metadata.roles.new()
-                # nGenreName[i] = nGenreName[i].replace('.', '')
-                nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.','')
+                nGenreName_ko = Search_Category(nGenreName[i])
+                if (nGenreName[i] == nGenreName_ko): nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.', '')
+                # nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.','')
                 # Logging(nGenreName[i])
                 Logging(nGenreName_ko, 'Debug')
                 metadata.genres.add(nGenreName_ko)
@@ -1826,8 +1948,10 @@ class redstar_javscraper(Agent.Movies):
         Logging('┌──────  Studio Info start ──────┐','Info')
         try:
             sTemp = String_slice(searchResults, 'itemprop="author">', '<')
-            metadata.studio = Papago_Trans(str(sTemp), 'ja')
-            Logging('Studio: ' + str(metadata.studio),'Debug')
+            nStudio = Search_Label(sTemp)
+            if (sTemp == nStudio): nStudio = Papago_Trans(sTemp, 'ja')
+            metadata.studio = nStudio #Papago_Trans(str(sTemp), 'ja')
+            Logging('Studio: ' + nStudio,'Debug')
         except:
             Logging('@@@ Studio failed','Error')
         Logging('└──────  Studio Info end ──────┘','Info')
@@ -1898,10 +2022,8 @@ class redstar_javscraper(Agent.Movies):
             for i in range(0, j):
                 role = metadata.roles.new()
                 if (nGenreName_arr[i] == '' or nGenreName_arr[i] <> ' '):
-                    # nGenreName_arr[i] = nGenreName_arr[i].replace('.', '')
-                    nGenreName_ko = Papago_Trans(nGenreName_arr[i], 'ja').replace('.','')
-                    # Logging(nGenreName[i])
-                    # Logging(nGenreName_ko)
+                    nGenreName_ko = Search_Category(nGenreName_arr[i])
+                    if (nGenreName_arr[i] == nGenreName_ko): nGenreName_ko = Papago_Trans(nGenreName_arr[i], 'ja').replace('.','')
                     metadata.genres.add(nGenreName_ko)
                     Logging(' Genre add: ' + nGenreName_ko,'Debug')            
         except:
@@ -2055,8 +2177,10 @@ class redstar_javscraper(Agent.Movies):
         try:
             sTemp = String_slice(searchResults, '片商', '</div>')
             sTemp = String_slice(sTemp, 'a href', '</span>')
-            metadata.studio = String_slice(sTemp, '">', '</a')
-            metadata.studio = Papago_Trans(str(metadata.studio), 'ja')
+            sTemp = String_slice(sTemp, '">', '</a')
+            nStudio = Search_Label(sTemp)
+            if (sTemp == nStudio): nStudio = Papago_Trans(sTemp, 'ja')
+            metadata.studio = nStudio #Papago_Trans(str(metadata.studio), 'ja')
             Logging('Studio: ' + str(metadata.studio), 'Debug')
         except:
             Logging('@@@ Studio failed', 'Error')
@@ -2114,10 +2238,8 @@ class redstar_javscraper(Agent.Movies):
             j = len(nGenreName)
             for i in range(0, j):
                 role = metadata.roles.new()
-                # nGenreName[i] = nGenreName[i].replace('.', '')
-                nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.', '')
-                # Logging(nGenreName[i], 'Debug')
-                # Logging(nGenreName_ko, 'Debug')
+                nGenreName_ko = Search_Category(nGenreName[i])
+                if (nGenreName[i] == nGenreName_ko): nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.', '')
                 metadata.genres.add(nGenreName_ko)
         except:
             Logging('@@@ Genre failed', 'Error')
@@ -2271,19 +2393,21 @@ class redstar_javscraper(Agent.Movies):
 
         # 스튜디오=> 제조사
         try:
-            Logging('┌──────  Maker Info start ──────┐','Info')
+            Logging('┌──────  javlibrary Maker Info start ──────┐','Info')
             sTemp = String_slice(searchResults, 'メーカー', '</tr>')
             sTemp = String_slice(sTemp, 'rel="tag">', '</a>')
-            metadata.studio = sTemp
-            metadata.studio = Papago_Trans(str(metadata.studio), 'ja')
+            nStudio = Search_Label(sTemp)
+            if (sTemp == nStudio): nStudio = Papago_Trans(sTemp, 'ja')
+            metadata.studio = nStudio
+            # metadata.studio = Papago_Trans(str(metadata.studio), 'ja')
             Logging('Maker: ' + str(metadata.studio),'Debug')
-            Logging('└──────  Maker Info end ──────┘','Info')
+            Logging('└──────  javlibrary Maker Info end ──────┘','Info')
         except:
             Logging('@@@ Studio failed','Error')
 
         # 감독
         try:
-            Logging('┌──────  Director Info start ──────┐','Info')
+            Logging('┌──────  javlibrary Director Info start ──────┐','Info')
             # sTemp = String_slice(searchResults, '導演', '<p>')
             sTemp = Extract_str(searchResults, '監督', '</tr>')
             director_info = sTemp
@@ -2301,13 +2425,13 @@ class redstar_javscraper(Agent.Movies):
                         metadata.directors.add(director_info_ko)
                     except:
                         pass
-            Logging('└──────  Director Info end ──────┘','Info')
+            Logging('└──────  javlibrary Director Info end ──────┘','Info')
         except:
             Logging('@@@ Director failed','Error')
 
         # 일자 표시(미리보기, 원출처) 제품발매일:商品発売日 전달개시일:配信開始日
         try:
-            Logging('┌──────  Date Info start ──────┐','Info')
+            Logging('┌──────  javlibrary Date Info start ──────┐','Info')
             if (searchResults.find('発売日') <> -1):
                 nYear = String_slice(searchResults, '発売日', '</tr>')
                 nYear = String_slice(nYear, '<td class="text">', '</td>')
@@ -2317,7 +2441,7 @@ class redstar_javscraper(Agent.Movies):
                 metadata.year = int(nYearArray[0])
                 # 상세항목의 '원출처' 일자
                 metadata.originally_available_at = datetime.strptime(nYear, '%Y-%m-%d')
-            Logging('└──────  Date Info end ──────┘','Info')
+            Logging('└──────  javlibrary Date Info end ──────┘','Info')
         except:
             Logging('@@@ Date Failed','Error')
 
@@ -2330,46 +2454,44 @@ class redstar_javscraper(Agent.Movies):
 
         # 장르
         try:
-            Logging('┌──────  Genre Info start ──────┐','Info')
+            Logging('┌──────  javlibrary Genre Info start ──────┐','Info')
             metadata.roles.clear()
             nGenreName = Extract_str(searchResults, 'ジャンル', '</tr>')
             j = len(nGenreName)
             for i in range(0, j):
                 role = metadata.roles.new()
-                # nGenreName[i] = nGenreName[i].replace('.', '')
-                nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.','')
-                Logging(nGenreName[i],'Debug')
-                Logging(nGenreName_ko,'Debug')
+                nGenreName_ko = Search_Category(nGenreName[i])
+                if (nGenreName[i] == nGenreName_ko): nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.', '')
+                # nGenreName_ko = Papago_Trans(nGenreName[i], 'ja').replace('.','')
+                # Logging(nGenreName[i],'Debug')
+                # Logging(nGenreName_ko,'Debug')
                 metadata.genres.add(nGenreName_ko)
-            Logging('└──────  Genre Info end ──────┘','Info')
+            Logging('└──────  javlibrary Genre Info end ──────┘','Info')
         except:
             Logging('@@@ Genre failed','Error')
 
         # 배우정보
-        Logging('┌──────  Actor Info end ──────┐','Info')
+        Logging('┌──────  javlibrary Actor Info start ──────┐','Info')
         metadata.roles.clear()
-        nActorName=Extract_str(searchResults,'出演者', '</tr>')
-        # Logging('===================')
-        Logging(nActorName,'Debug')
+        nActorName = Extract_str(searchResults,'出演者', '</tr>')
         if (nActorName is not None):
             j=len(nActorName)
             for i in range(0,j):
                 role = metadata.roles.new()
-                # if (nActorName[i].find('(') > -1): nActorName = nActorName[i][0:nActorName[i].find('(')]
                 nTemp=nActorName[i]
                 if (nTemp.find('(') <> -1) : nTemp=nTemp[0:nTemp.find('(')]
                 nActorInfo = Get_actor_info(nTemp)
                 if (nActorInfo is not None):
                     role.photo = nActorInfo[0]
                     role.name = nActorInfo[1]
-                    Logging('배우이미지주소: ' + nActorInfo[0] + ' 배우이름: ' + nActorInfo[1], 'Debug')
+                    Logging('배우 이미지 주소: ' + nActorInfo[0] + ' 배우이름: ' + nActorInfo[1], 'Debug')
                 else:
                     role.name = nActorName
-                    Logging('배우이미지주소: 검색실패' + ' 배우이름: ' + nActorName[i], 'Debug')
-        Logging('└──────  Actor Info end ──────┘','Info')
+                    Logging('배우 이미지 주소: 검색실패' + ' 배우이름: ' + nActorName[i], 'Debug')
+        Logging('└──────  javlibrary Actor Info end ──────┘','Info')
 
         # Posters
-        Logging('┌──────  Poster Info start ──────┐','Info')
+        Logging('┌──────  javlibrary Poster Info start ──────┐','Info')
         try:
             posterURL_Small = String_slice(searchResults, 'video_jacket_img" src="', '"').replace("pl.","ps.")
             posterURL_Small = 'http:' + posterURL_Small
@@ -2379,13 +2501,13 @@ class redstar_javscraper(Agent.Movies):
                 if(posterURL_Small <>'' or posterURL_Small <> '#preview-video'):
                     metadata.posters[posterURL_Small] = Proxy.Preview(HTTP.Request(posterURL_Small, timeout=int(Prefs['timeout'])), sort_order=1)
             except:	Logging(' Can not load Small Poster','Error')
-            Logging('└──────  Poster Info end ──────┘','Info')
+            Logging('└──────  javlibrary Poster Info end ──────┘','Info')
         except:
             Logging('@@@ Poster Failed','Error')
 
         #background images
         try:
-            Logging('┌──────  Background Info start ──────┐','Info')
+            Logging('┌──────  javlibrary Background Info start ──────┐','Info')
             nBgackgroundimg=Extract_imgurl(searchResults, '<div class="previewthumbs"', '</div>','src')
             j = len(nBgackgroundimg)
             if (j <> -1):
@@ -2407,28 +2529,9 @@ class redstar_javscraper(Agent.Movies):
                     except:
                         Logging('@@@' + bgimg + ' Can not load','Error')
 
-            Logging('└──────  Background Info end ──────┘','Info')
+            Logging('└──────  javlibrary Background Info end ──────┘','Info')
         except:
             Logging('@@@ Background Image failed','Error')
-
-        # # Series 정보(plex에는 seires 항목이 없으므로 '주제' 항목에 이 값을 넣음)
-        # try:
-        #     Logging('=======  Series Info start =========','Info')
-        #     # Logging('######## series info')
-        #     # Logging(sTemp)
-        #     series_info = Extract_str(searchResults, '系列', '</div>')
-        #     # Logging(series_info,'Debug')
-        #     # Logging('SeriesInfo: ' + series_info)
-        #     if (series_info is not None):
-        #         if (series_info[0] <> '----'):
-        #             series_info_ko = Papago_Trans(series_info[0], 'ja')
-        #             Logging(series_info_ko,'Debug')
-        #             metadata.tagline = series_info_ko
-        #     else:
-        #         Logging('Series info not found','Error')
-        #     Logging('=======  Series Info end =========','Info')
-        # except:
-        #     Logging('@@@ Series failed','Error')
 
         # studio 컬렉션 생성
         try:
