@@ -22,13 +22,28 @@ HDR = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
        'Accept-Language': 'en-US,en;q=0.8',
        'Connection': 'keep-alive'}
 
-HDR_javdb = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'ko,en-US;q=0.9,en;q=0.8',
-        'referer': 'www.google.com',
-       'Connection': 'keep-alive'}
+HDR_javdb = {
+    'authority': 'javdb.com',
+    'method': 'GET',
+    'path': '/search?q=STARS-466&f=all',
+    'scheme': 'https',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'accept-encoding': 'gzip, deflate, br',
+    'accept-language': 'ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7',
+    'cookie': 'theme=auto; locale=zh; _ym_d=1641773830; _ym_uid=1641773830421828005; over18=1; _ym_isad=1; _jdb_session=XGuc6iwKyCx9gczSDfl7X0tcTwIRkN8sYNaCAeSS1QRBJIqFdojWK%2F9%2BfPLQjUcMfyHs5pIwRB4HamIiaN22%2BTbT6YbZkf5HVZ34CycIdaO3qdXibuTaIYOhYEnRyCTK8bGOWqWLJHikAPYKbKjr6UD1EkIxRXdUFgo%2Fwl0kYTGSPmQdgB3WGe0WTuLcGSWo7%2FsoDJBGJn98d%2Ft90tOairODQNCJhaOSUP9JA0jlOV265iFD5NXcRci9%2BVH9AIHP3uQWZL9HMH5dVwv3weA5IAWnyNJcSO%2FDyiKRxXiJRx5B1NsglRHCTKhO--LqQLVGBdNKM0cpIS--G8qBjputuvCNZkb%2BoIqW6g%3D%3D',
+    'if-none-match': 'W/"7d8428bfc9404c412b88f8b56a2bc45c"',
+    'referer': 'https://javdb.com/search?q=STARS-466&f=all',
+    'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+    }
+
 
 HDR_AVDBS = {'authority': 'www.avdbs.com',
         'method': 'GET',
@@ -136,7 +151,7 @@ def Papago_Trans(txt,lang='en'):
             # print("Error Code:" + rescode)
             return txt
     except:
-        Logging('papago Exception','Error')
+        Logging('@@@ papago Exception 번역 요청: ' + txt + '언어: ' + lang,'Error')
         return txt
 
 def String_slice(nStr,nStartstr,nEndstr):
@@ -407,7 +422,7 @@ def Search_Label(txt):
              'プレステージ': u'프래스티지', u'RADIX': u'래딕스', u'REbecca': u'레베카', u'ROCKET': u'로켓', u'ルビー': u'루비', u'Ruby': u'루비',
              'S1(S1NumberOneStyle)': u'S1 넘버원 스타일', u'エスワン ナンバーワンスタイル': u'S1 넘버원 스타일', u'S1': u'S1 넘버원 스타일',
              'SADISTICVILLAGE': u'사디스틱 빌리지', u'サディスティックヴィレッジ': u'사디스틱 빌리지', u'S-Cute': u'S-큐트', u'SILKLABO': u'실크라보',
-             'SOD(SOFTONDEMAND)': u'소프트 온 디멘드', u'ソフトオンデマンド': u'소프트 온 디멘드', u'SOD': u'소프트 온 디멘드', u'SOSORU×GARCON': u'소소루x가르콘',
+             'SOD(SOFTONDEMAND)': u'소프트 온 디멘드', u'ソフトオンデマンド': u'소프트 온 디멘드', u'SOD': u'소프트 온 디멘드', u'SODクリエイト':u'소프트 온 디멘드', u'SOSORU×GARCON': u'소소루x가르콘',
              '溜池ゴロー': u'다마이케 고로', u'tameikegoro': u'다마이케 고로', u'タカラ映像': u'타카라 비주얼', u'TAKARA VISUAL': u'타카라 비주얼', u'鉄板': u'철판',
              'TEPPAN': u'철판', u'TMA(TotalMediaAgency)': u'토탈 미디어 에이전시', u'TMA': u'토탈 미디어 에이전시', u'I.B.WORKS': u'토탈 미디어 에이전시',
              'TOKYO247': u'도쿄247', u'VENUS': u'비너스', u'WAAPGROUP': u'WAAP그룹', u'WAAP': u'WAAP그룹', u'DREAMTICKET': u'WAAP그룹',
@@ -1050,7 +1065,7 @@ class redstar_javscraper(Agent.Movies):
         ###### javdb video 검색  ######
         ##############################
         Logging('##### Start javdb video search #####','Info')
-        SEARCH_URL = 'https://javdb.com/search?q='
+        SEARCH_URL = 'https://javdb.com/search?q=' #https://javdb.com/search?q=STARS-466&f=all
         SEARCH_URL_R18 = 'https://javdb.com/over18?respond=1&rurl='
 
         getfileinfo=self.get_fileinfo(media)
@@ -1067,7 +1082,7 @@ class redstar_javscraper(Agent.Movies):
         Logging("### Release ID:    " + str(release_id) + ' org_id: ' + str(org_id),'Info')  # Release ID: IPZ00929 org_id: IPZ-929
 
         # try:
-        searchResults = HTTP.Request(SEARCH_URL + release_id , Header = HDR_javdb).content
+        searchResults = HTTP.Request(SEARCH_URL + release_id + '&f=all' , headers = HDR_javdb).content
         Log(searchResults)
         # except:
         #     Logging( 'javdb search exception','Error')
@@ -2478,7 +2493,7 @@ class redstar_javscraper(Agent.Movies):
             j=len(nActorName)
             for i in range(0,j):
                 role = metadata.roles.new()
-                nTemp=nActorName[i]
+                nTemp = nActorName[i]
                 if (nTemp.find('(') <> -1) : nTemp=nTemp[0:nTemp.find('(')]
                 nActorInfo = Get_actor_info(nTemp)
                 if (nActorInfo is not None):
@@ -2494,7 +2509,7 @@ class redstar_javscraper(Agent.Movies):
         Logging('┌──────  javlibrary Poster Info start ──────┐','Info')
         try:
             posterURL_Small = String_slice(searchResults, 'video_jacket_img" src="', '"').replace("pl.","ps.")
-            posterURL_Small = 'http:' + posterURL_Small
+            if (posterURL_Small.find('http:') <> -1): posterURL_Small = 'http:' + posterURL_Small
             # posterURL_Small = Extract_imgurl(searchResults, '<div class="previewthumbs"', '</div>', 'src')
             Logging("small Poster URL / 포스터 주소 : " + posterURL_Small,'Debug')
             try:
