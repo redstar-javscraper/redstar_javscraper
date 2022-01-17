@@ -22,6 +22,29 @@ HDR = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
        'Accept-Language': 'en-US,en;q=0.8',
        'Connection': 'keep-alive'}
 
+HDR_DMM = {
+'authority': 'pics.dmm.co.jp',
+'method': 'GET',
+'path': '/mono/movie/adult/118abp408/118abp408ps.jpg',
+'scheme': 'https',
+'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+'accept-encoding': 'gzip, deflate, br',
+'accept-language': 'ko,en-US;q=0.9,en;q=0.8,ko-KR;q=0.7',
+'cache-control': 'max-age=0',
+'cookie': 'i3_ab=e56cdd04-c93a-4f8a-aa7c-53fdfc256bc2; app_uid=Z/6QHmHNRgwMcw3eCSUkAg==; _gcl_au=1.1.912641532.1640842765; age_check_done=1; adpf_uid=xeLTnHpNFHxCqyQP; i3_recommend_ab=62; cto_bundle=Y5RWQl9rejB1UFpndEF2U1NRVzRrandBRDF4Y2ZqVXI3eiUyQkpqdGI1WVdZeTZmRTVGUGpsa243M3JDYUVOWTNUVHpsSWNwN1pPV3o4JTJCM1BkSVVwN0c5Vks0TTJsN2RZdEd1SSUyRk5xb0h0RTNsOFJ6UEhpazI2MmVZVnhRVDlPV2V3VDNwblNPUUxvUlh3dGNiZTlyaGJCMTZ6T2clM0QlM0Q; digital[play_volume]=0.5; digital[play_muted]=0; digital[play_bitrate]=1500; _ts_yjad=1640949960175; __utmz=125690133.1641021188.16.5.utmcsr=actress.dmm.co.jp|utmccn=(referral)|utmcmd=referral|utmcct=/; _ga=GA1.3.1092917771.1640842765; _ga_G34HHM5C8N=GS1.1.1642120820.26.1.1642120882.0; _ga_V3D5MK9Z8V=GS1.1.1642120820.26.1.1642120882.0; book_block_popup_session=%7B%22coupon_33%22%3A1%2C%22winter_cp_202112_2%22%3A1%7D; _dga=GA1.3.1455682301.1640870931; cklg=ja; mbox=check#true#1642384846|session#1642384785356-488179#1642386646; ckcy=1; __utma=125690133.260188507.1640842764.1642120824.1642384788.28; __utmb=125690133.0.10.1642384788; __utmc=125690133; _gid=GA1.3.1298892190.1642384788; AMP_TOKEN=%24NOT_FOUND; _dga_gid=GA1.3.184971127.1642384791',
+'if-modified-since': 'Mon, 16 Nov 2015 07:02:20 GMT',
+'if-none-match': '"56497f7c-3175"',
+'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
+'sec-ch-ua-mobile': '?0',
+'sec-ch-ua-platform': '"Windows"',
+'sec-fetch-dest': 'document',
+'sec-fetch-mode': 'navigate',
+'sec-fetch-site': 'none',
+'sec-fetch-user': '?1',
+'upgrade-insecure-requests': '1',
+'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+}
+
 HDR_javdb = {
     'authority': 'javdb.com',
     'method': 'GET',
@@ -43,7 +66,6 @@ HDR_javdb = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
     }
-
 
 HDR_AVDBS = {'authority': 'www.avdbs.com',
         'method': 'GET',
@@ -396,43 +418,43 @@ def Search_Label(txt):
     
     ## 미리 정의한 레이블명을 검색해 레이블에 해당하는 한글을 리턴함
     label = {u'Aircontrol': u'에어컨트롤', u'アリスJAPAN': u'엘리스 재팬', u'ALICEJAPAN': u'엘리스 재팬', u'ATTACKERS': u'어택커즈', u'アタッカーズ': u'어택커즈',
-             'BabyEntertainment': u'베이비 엔터테인먼트', u'BeFree': u'비프리', u'ビーフリー': u'비프리', u'痴女ヘブン': u'색녀천국',
-             'ChijyoHEAVEN': u'색녀천국', u'DANDY&COSMOS': u'댄디&코스모스', u'ダスッ!': u'다스', u'DAS': u'다스', "DEEP'S": '딥스',
-             'DOC(DIGITALOPTICALCREATE)': u'독', u'DIGITALOPTICALCREATE': u'독', u'E-BODY': u'이-바디', u'FALENO': u'팔레노',
-             'FAプロ': u'FA프로', u'Fitch': u'피치', u'フィッチ': u'피치', u'G-AREA&PERFECT-G': u'G-애리어&퍼펙트-G', u'GIGA': u'기가',
-             'GLORYQUEST': u'글로리 퀘스트', u'グローリークエスト': u'글로리 퀘스트', u'H.M.P': u'H.M.P', u'変態紳士倶楽部': u'헨타이 신사 클럽',
-             'HENTAISHINSHICLUB': u'헨타이 신사 클럽', u'HHHGroup': u'HHH그룹', u'Hunter': u'HHH그룹', u'HunterBlack': u'HHH그룹',
-             'ROYAL': u'HHH그룹', u'お夜食カンパニー': u'HHH그룹', u'Apache': u'HHH그룹', u'AtoM': u'HHH그룹', u'ゴールデンタイム': u'HHH그룹',
-             'GOLDENTIME': u'HHH그룹', u'HIBINO': u'히비노', u'ヒビノ': u'히비노', u'HimeMix': u'히메믹스', u'ひよこ': u'히요코', u'hiyoko': u'히요코',
-             '本中': u'혼나카', u'HONNAKA': u'혼나카', u'IENERGY': u'아이에너지', u'アイエナジー': u'아이에너지', u'IDEAPOCKET': u'아이디어포켓',
+             u'BabyEntertainment': u'베이비 엔터테인먼트', u'BeFree': u'비프리', u'ビーフリー': u'비프리', u'痴女ヘブン': u'색녀천국',
+             u'ChijyoHEAVEN': u'색녀천국', u'DANDY&COSMOS': u'댄디&코스모스', u'ダスッ!': u'다스', u'DAS': u'다스', "DEEP'S": '딥스',
+             u'DOC(DIGITALOPTICALCREATE)': u'독', u'DIGITALOPTICALCREATE': u'독', u'E-BODY': u'이-바디', u'FALENO': u'팔레노',
+             u'FAプロ': u'FA프로', u'Fitch': u'피치', u'フィッチ': u'피치', u'G-AREA&PERFECT-G': u'G-애리어&퍼펙트-G', u'GIGA': u'기가',
+             u'GLORYQUEST': u'글로리 퀘스트', u'グローリークエスト': u'글로리 퀘스트', u'H.M.P': u'H.M.P', u'変態紳士倶楽部': u'헨타이 신사 클럽',
+             u'HENTAISHINSHICLUB': u'헨타이 신사 클럽', u'HHHGroup': u'HHH그룹', u'Hunter': u'HHH그룹', u'HunterBlack': u'HHH그룹',
+             u'ROYAL': u'HHH그룹', u'お夜食カンパニー': u'HHH그룹', u'Apache': u'HHH그룹', u'AtoM': u'HHH그룹', u'ゴールデンタイム': u'HHH그룹',
+             u'GOLDENTIME': u'HHH그룹', u'HIBINO': u'히비노', u'ヒビノ': u'히비노', u'HimeMix': u'히메믹스', u'ひよこ': u'히요코', u'hiyoko': u'히요코',
+             u'本中': u'혼나카', u'HONNAKA': u'혼나카', u'IENERGY': u'아이에너지', u'アイエナジー': u'아이에너지', u'IDEAPOCKET': u'아이디어포켓',
              u'アイデアポケット': u'아이디어 포켓', u'kawaii*': u'카와이', u'kawaii': u'카와이', u'kingdom': u'킹덤', u'KMP': u'KM프로듀스',
-             'ケイ・エム・プロデュース': u'KM프로듀스', u'Aver': u'KM프로듀스', u'KMPPREMIUM': u'KM프로듀스', u'Million': u'KM프로듀스',
-             'Millionミント(mint)': u'KM프로듀스', u'宇宙企画': u'KM프로듀스', u'REAL': u'KM프로듀스', u'SCOOP': u'KM프로듀스', u'BAZOOKA': u'KM프로듀스',
-             'S級素人': u'KM프로듀스', u'エロガチャ(EROGACHA)': u'KM프로듀스', u'ヒメゴト': u'KM프로듀스', u'サロメ(SALOME)': u'KM프로듀스', u'300': u'KM프로듀스',
-             '3000': u'KM프로듀스', u'俺の素人': u'KM프로듀스', u'僕たち男': u'KM프로듀스', u'EDGE': u'KM프로듀스', u'ナンパHEAVEN': u'KM프로듀스',
-             'おかず。': u'KM프로듀스', u'UMANAMI': u'KM프로듀스', u'Nadeshiko': u'KM프로듀스', u'100人': u'KM프로듀스', u'マダムス': u'마담스',
-             'Madames': u'마담스', u'FS.KnightsVisual': u'FS나이트비주얼', u'Madonna': u'마돈나', u'マドンナ': u'마돈나', u'MAXING': u'맥싱',
-             '未満': u'미만', u'MIMAN': u'미만', u'MOODYZ': u'무디즈', u'ムーディーズ': u'무디즈', u'妄想族': u'망상족', u'Mousouzoku': u'망상족',
-             'ANNEX(無言)/妄想族': u'망상족', u'ABC/妄想族': u'망상족', u'AVScollector’s': u'망상족', u'かぐや姫Pt/妄想族': u'망상족',
-             'ティーチャー/妄想族': u'망상족', u'ブロッコリー/妄想族': u'망상족', u'山と空/妄想族': u'망상족', u'Mr.Michiru': u'미스터 미칠', u'ミスターミチル': u'미스터 미칠',
-             'MUTEKI': u'무테키', u'舞ワイフ': u'마이 와이프', u'mywife': u'마이 와이프', u'AROUND': u'마이 와이프', u'ながえSTYLE': u'나가에 스타일',
-             'NAGAE STYLE': u'나가에 스타일', u'ナンパJAPAN': u'남파 재팬', u'NANPA-JAPAN': u'남파 재팬', u'NATURALHIGH': u'내추럴 하이',
-             'ナチュラルハイ': u'내추럴 하이', u'OPPAI': u'오파이', u'おっぱい': u'오파이', u'ORGA': u'올가', u'オルガ': u'올가', u'素人onlyプラム': u'플럼',
-             'Plum': u'플럼', u'pornograph.tv': u'포르노그래피.TV', u'PREMIUM': u'프리미엄', u'プレミアム': u'프리미엄', u'PRESTIGE': u'프래스티지',
-             'プレステージ': u'프래스티지', u'RADIX': u'래딕스', u'REbecca': u'레베카', u'ROCKET': u'로켓', u'ルビー': u'루비', u'Ruby': u'루비',
-             'S1(S1NumberOneStyle)': u'S1 넘버원 스타일', u'エスワン ナンバーワンスタイル': u'S1 넘버원 스타일', u'S1': u'S1 넘버원 스타일',
-             'SADISTICVILLAGE': u'사디스틱 빌리지', u'サディスティックヴィレッジ': u'사디스틱 빌리지', u'S-Cute': u'S-큐트', u'SILKLABO': u'실크라보',
-             'SOD(SOFTONDEMAND)': u'소프트 온 디멘드', u'ソフトオンデマンド': u'소프트 온 디멘드', u'SOD': u'소프트 온 디멘드', u'SODクリエイト':u'소프트 온 디멘드', u'SOSORU×GARCON': u'소소루x가르콘',
-             '溜池ゴロー': u'다마이케 고로', u'tameikegoro': u'다마이케 고로', u'タカラ映像': u'타카라 비주얼', u'TAKARA VISUAL': u'타카라 비주얼', u'鉄板': u'철판',
-             'TEPPAN': u'철판', u'TMA(TotalMediaAgency)': u'토탈 미디어 에이전시', u'TMA': u'토탈 미디어 에이전시', u'I.B.WORKS': u'토탈 미디어 에이전시',
-             'TOKYO247': u'도쿄247', u'VENUS': u'비너스', u'WAAPGROUP': u'WAAP그룹', u'WAAP': u'WAAP그룹', u'DREAMTICKET': u'WAAP그룹',
-             'NON': u'WAAP그룹', u'光夜蝶': u'WAAP그룹', u'WANZFACTORY': u'완즈 팩토리', u'ワンズファクトリー': u'완즈 팩토리', u'天然むすめ': u'천연 무스메',
-             '10musume': u'천연 무스메', u'1pondo': u'1폰도', u'一本道': u'1폰도', u'Caribbeancom': u'캐리비안컴', u'カリビアンコム': u'캐리비안컴',
-             'エッチな4610': u'음란한4610', u'エッチな4610(H4610)': u'음란한4610', u'エッチな0930(H0930)': u'음란한4610',
-             '人妻斬り(C0930)': u'음란한4610', u'HEYZO': u'헤이조', u'FellatioJapan': u'펠라치오 재팬', u'HandjobJapan': u'핸드잡 재팬',
-             'LegsJapan': u'다리 재팬', u'金8天国': u'김8천국', u'kin8tengoku': u'김8천국', u'ムラムラ': u'무라무라', u'muramura': u'무라무라',
-             'パコパコママ': u'파코파코마마', u'pacopacomama': u'파코파코마마', u'しろハメ': u'시로-하메', u'SIRO-HAME': u'시로-하메', u'Heydouga': u'시로-하메',
-             'Heydouga4017': u'시로-하메', u'Tokyo-Hot': u'도쿄핫', u'東京熱': u'도쿄핫'}
+             u'ケイ・エム・プロデュース': u'KM프로듀스', u'Aver': u'KM프로듀스', u'KMPPREMIUM': u'KM프로듀스', u'Million': u'KM프로듀스',
+             u'Millionミント(mint)': u'KM프로듀스', u'宇宙企画': u'KM프로듀스', u'REAL': u'KM프로듀스', u'SCOOP': u'KM프로듀스', u'BAZOOKA': u'KM프로듀스',
+             u'S級素人': u'KM프로듀스', u'エロガチャ(EROGACHA)': u'KM프로듀스', u'ヒメゴト': u'KM프로듀스', u'サロメ(SALOME)': u'KM프로듀스', u'300': u'KM프로듀스',
+             u'3000': u'KM프로듀스', u'俺の素人': u'KM프로듀스', u'僕たち男': u'KM프로듀스', u'EDGE': u'KM프로듀스', u'ナンパHEAVEN': u'KM프로듀스',
+             u'おかず。': u'KM프로듀스', u'UMANAMI': u'KM프로듀스', u'Nadeshiko': u'KM프로듀스', u'100人': u'KM프로듀스', u'マダムス': u'마담스',
+             u'Madames': u'마담스', u'FS.KnightsVisual': u'FS나이트비주얼', u'Madonna': u'마돈나', u'マドンナ': u'마돈나', u'MAXING': u'맥싱',
+             u'未満': u'미만', u'MIMAN': u'미만', u'MOODYZ': u'무디즈', u'ムーディーズ': u'무디즈', u'妄想族': u'망상족', u'Mousouzoku': u'망상족',
+             u'ANNEX(無言)/妄想族': u'망상족', u'ABC/妄想族': u'망상족', u'AVScollector’s': u'망상족', u'かぐや姫Pt/妄想族': u'망상족',
+             u'ティーチャー/妄想族': u'망상족', u'ブロッコリー/妄想族': u'망상족', u'山と空/妄想族': u'망상족', u'Mr.Michiru': u'미스터 미칠', u'ミスターミチル': u'미스터 미칠',
+             u'MUTEKI': u'무테키', u'舞ワイフ': u'마이 와이프', u'mywife': u'마이 와이프', u'AROUND': u'마이 와이프', u'ながえSTYLE': u'나가에 스타일',
+             u'NAGAE STYLE': u'나가에 스타일', u'ナンパJAPAN': u'남파 재팬', u'NANPA-JAPAN': u'남파 재팬', u'NATURALHIGH': u'내추럴 하이',
+             u'ナチュラルハイ': u'내추럴 하이', u'OPPAI': u'오파이', u'おっぱい': u'오파이', u'ORGA': u'올가', u'オルガ': u'올가', u'素人onlyプラム': u'플럼',
+             u'Plum': u'플럼', u'pornograph.tv': u'포르노그래피.TV', u'PREMIUM': u'프리미엄', u'プレミアム': u'프리미엄', u'PRESTIGE': u'프래스티지',
+             u'プレステージ': u'프래스티지', u'RADIX': u'래딕스', u'REbecca': u'레베카', u'ROCKET': u'로켓', u'ルビー': u'루비', u'Ruby': u'루비',
+             u'S1(S1NumberOneStyle)': u'S1 넘버원 스타일', u'エスワン ナンバーワンスタイル': u'S1 넘버원 스타일', u'S1': u'S1 넘버원 스타일',
+             u'SADISTICVILLAGE': u'사디스틱 빌리지', u'サディスティックヴィレッジ': u'사디스틱 빌리지', u'S-Cute': u'S-큐트', u'SILKLABO': u'실크라보',
+             u'SOD(SOFTONDEMAND)': u'소프트 온 디멘드', u'ソフトオンデマンド': u'소프트 온 디멘드', u'SOD': u'소프트 온 디멘드', u'SODクリエイト':u'소프트 온 디멘드', u'SOSORU×GARCON': u'소소루x가르콘',
+             u'溜池ゴロー': u'다마이케 고로', u'tameikegoro': u'다마이케 고로', u'タカラ映像': u'타카라 비주얼', u'TAKARA VISUAL': u'타카라 비주얼', u'鉄板': u'철판',
+             u'TEPPAN': u'철판', u'TMA(TotalMediaAgency)': u'토탈 미디어 에이전시', u'TMA': u'토탈 미디어 에이전시', u'I.B.WORKS': u'토탈 미디어 에이전시',
+             u'TOKYO247': u'도쿄247', u'VENUS': u'비너스', u'WAAPGROUP': u'WAAP그룹', u'WAAP': u'WAAP그룹', u'DREAMTICKET': u'WAAP그룹',
+             u'NON': u'WAAP그룹', u'光夜蝶': u'WAAP그룹', u'WANZFACTORY': u'완즈 팩토리', u'ワンズファクトリー': u'완즈 팩토리', u'天然むすめ': u'천연 무스메',
+             u'10musume': u'천연 무스메', u'1pondo': u'1폰도', u'一本道': u'1폰도', u'Caribbeancom': u'캐리비안컴', u'カリビアンコム': u'캐리비안컴',
+             u'エッチな4610': u'음란한4610', u'エッチな4610(H4610)': u'음란한4610', u'エッチな0930(H0930)': u'음란한4610',
+             u'人妻斬り(C0930)': u'음란한4610', u'HEYZO': u'헤이조', u'FellatioJapan': u'펠라치오 재팬', u'HandjobJapan': u'핸드잡 재팬',
+             u'LegsJapan': u'다리 재팬', u'金8天国': u'김8천국', u'kin8tengoku': u'김8천국', u'ムラムラ': u'무라무라', u'muramura': u'무라무라',
+             u'パコパコママ': u'파코파코마마', u'pacopacomama': u'파코파코마마', u'しろハメ': u'시로-하메', u'SIRO-HAME': u'시로-하메', u'Heydouga': u'시로-하메',
+             u'Heydouga4017': u'시로-하메', u'Tokyo-Hot': u'도쿄핫', u'東京熱': u'도쿄핫'}
 
     if txt <> '':
         nret = txt.replace(' ', '').upper().decode('utf8')  # 문자열 공백 제거
@@ -1367,7 +1389,7 @@ class redstar_javscraper(Agent.Movies):
             else:
                 Logging('배우정보 없음','Info')
         except:
-            Logging('Actor Info Failed','Info')
+            Logging('@@@ Actor Info Failed','Info')
             pass
         Logging('└────── dmm 배우정보 종료 ──────┘', 'Info')
 
@@ -1420,10 +1442,10 @@ class redstar_javscraper(Agent.Movies):
             Logging(str(i)+ '### 이미지 경로: ' + extimg[i] + ' 큰이미지 경로: ' + extimg_Large ,'Debug')
             try:
                 if (extimg_Large <> ''):
-                    metadata.art[extimg_Large] = Proxy.Preview(HTTP.Request(extimg_Large, headers=HDR_javdb,
+                    metadata.art[extimg_Large] = Proxy.Preview(HTTP.Request(extimg_Large, headers=HDR_DMM,
                                                                          timeout=int(Prefs['timeout'])).content, sort_order=i + 1) #{'Referer': 'http://www.google.com'}
             except:
-                Logging('###' + extimg[i] + ' Can not load', 'Error')
+                Logging('@@@ Not load image: ' + extimg[i] , 'Error')
         Logging('└────── dmm 배경이미지 종료 ──────┘', 'Info')
 
         # Series 정보(plex에는 seires 항목이 없으므로 '주제' 항목에 이 값을 넣음)
