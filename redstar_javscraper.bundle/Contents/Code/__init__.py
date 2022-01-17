@@ -1315,6 +1315,7 @@ class redstar_javscraper(Agent.Movies):
         # 줄거리
         Logging('┌────── dmm 줄거리 시작 ──────┐', 'Info')
         try:
+            if (str(Prefs['searchsiteinfo']) == 'True'): metadata.summary = '[DMM] '
             sTemp = String_slice(searchResults, '<div class="mg-b20 lh4">', '</div')
             # sTemp = ExtractFromHtml('<div class="mg-b20 lh4">', '</div',searchResults)
             sTemp = re.sub('<.+?>', '', sTemp, 0, re.I|re.S)
@@ -1322,8 +1323,7 @@ class redstar_javscraper(Agent.Movies):
             Logging(' 테그 제거 결과: ' + sTemp ,'Debug')
             if (sTemp <> ''):
                 Logging('#### 줄거리 (Summary): ' + sTemp, 'Debug')
-                metadata.summary = Papago_Trans(sTemp, 'ja')
-                if (str(Prefs['searchsiteinfo']) == 'True'): metadata.summary = '[DMM] ' + metadata.summary
+                metadata.summary = metadata.summary + Papago_Trans(sTemp, 'ja')
         except:
             pass
         Logging('└────── dmm 줄거리 종료 ──────┘', 'Info')
@@ -1491,9 +1491,6 @@ class redstar_javscraper(Agent.Movies):
         Logging('└────── r18 제목 종료 ──────┘', 'Info')
 
         # 스튜디오
-        # Logging('--------------------------------')
-        # Logging(json_data['data']['maker'],'Info')
-        # Logging('--------------------------------')
         Logging('┌────── r18 스튜디오 시작 ──────┐', 'Info')
         try:
             for key, value in json_data['data']['maker'].items():
@@ -1512,10 +1509,11 @@ class redstar_javscraper(Agent.Movies):
         # 줄거리 요약정보
         Logging('┌────── r18 줄거리 시작 ──────┐', 'Info')
         try:
+            if (str(Prefs['searchsiteinfo']) == 'True'): metadata.summary = '[R18] '
             if (json_data['data']['comment'] is not None):
                 nSummary = json_data['data']['comment']
                 nSummaryTR = Papago_Trans(nSummary, 'en')
-                metadata.summary = '[R18] ' + nSummaryTR  # 줄거리 요약정보
+                metadata.summary = metadata.summary + nSummaryTR  # 줄거리 요약정보
                 Logging('### 줄거리 정보(ORG): ' + nSummary + ' 번역: ' + nSummaryTr, 'Info')
             else:
                 Logging('@@@ 줄거리 정보 없음 @@@', 'Info')
@@ -2015,6 +2013,7 @@ class redstar_javscraper(Agent.Movies):
         if (str(Prefs['searchsiteinfo']) == 'True'): metadata.summary = '[pornav]'
         Logging('┌──────  summary Info start ──────┐','Info')
         try:
+            if (str(Prefs['searchsiteinfo']) == 'True'): metadata.summary = '[PORNAV] '
             sTemp = String_slice(searchResults, 'class="tag-box tag-box-v2">', '</div>').replace('<p>','').replace('</p>','').replace('<br/>','').replace('\"','"')
             metadata.summary = metadata.summary + Papago_Trans(sTemp, 'ja')
             Logging('summary: ' + str(metadata.summary),'Debug')
@@ -2181,10 +2180,13 @@ class redstar_javscraper(Agent.Movies):
         # Logging(searchResults)
 
         Logging('┌────── javdb 제목 시작 ──────┐', 'Info')
-        id = String_slice(media.title, '[', ']').upper()
-        nTitle = String_slice(searchResults, '<strong>', '<').replace(id, '').replace('\"','"')
-        metadata.original_title = nTitle
-        self.func_update_title(metadata, media, id, nTitle, ncroling, 'ja')
+        try:
+            id = String_slice(media.title, '[', ']').upper()
+            nTitle = String_slice(searchResults, '<strong>', '<').replace(id, '').replace('\"','"')
+            metadata.original_title = nTitle
+            self.func_update_title(metadata, media, id, nTitle, ncroling, 'ja')
+        except:
+            pass
         Logging('└────── javdb 제목 종료 ──────┘', 'Info')
 
         # 스튜디오=> 제조사
