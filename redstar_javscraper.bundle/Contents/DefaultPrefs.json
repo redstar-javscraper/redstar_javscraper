@@ -109,5 +109,13 @@
 		"label": "Series로 컬렉션 만들기(Default 미사용)",
 		"type": "bool",
 		"default": "false"
+	},
+	{
+		"id": "Actor_site",
+		"label": "배우 정보를 가져올 사이트를 선택합니다.",
+		"type": "enum",
+		"values": ["AVDBS", "HENTAKU"],
+		"default": "AVDBS"
 	}
+
 ]
