@@ -556,44 +556,82 @@ def detailItem(root, selector):
         return elements[0].text_content().strip()
     return None
 
-
 def Get_actor_info(nEntity):
-    # hentaku 없어져서 avdbs.com 으로 변경 2021.12.31
     try:
-        if (nEntity == ''):
-            return
-        Logging('############# Actor Info from avdbs ##############', 'Info')
-        nEntity = nEntity.decode('utf8')
-        Logging('검색할 배우명 : ' + nEntity, 'Debug')
-        Search_URL = 'https://www.avdbs.com/w2017/page/search/search_actor.php?kwd=' + nEntity  # urllib2.quote(nEntity) #한글, 일어등은 quote 해줘야 함
-        Logging('### search URL: =>' + Search_URL + '<=', 'Debug')
-        searchResults = HTTP.Request(Search_URL, headers=HDR_AVDBS, timeout=int(Prefs['timeout'])).content
-        # Logging('### searchResults: ' + searchResults,'Debug')
-        nResult = []
-        if (searchResults == '' or searchResults.find('검색된 배우가 없습니다') <> -1):
-            # 검색결과 없을때
-            nResult.append('')  # image url
-            nResult.append(Papago_Trans(nEntity, 'ja'))  # kor name
-            nResult.append(Papago_Trans(nEntity, 'en'))  # eng name
-            Logging('### 검색된 배우가 없습니다. Actor Return is Null 저장할 배우명: ' + nEntity, 'Info')
-        else:
-            # 검색결과 존재시
-            # Logging('### 배우 정보를 검색했습니다. Actor Return Found', 'Info')
-            nStr = String_slice(searchResults, '<ul class="lst"', '</ul>')
-            # Logging('### 배우 검색됨. 배우 정보: ' + nStr, 'Debug')
-            nimgurl = String_slice(nStr, 'img src="', '"')
-            Logging('### 배우 이미지 주소 Actor image: ' + nimgurl, 'Debug')
-            nResult.append(nimgurl)
-            rKorName = Extract_str(nStr, '<p class="k_name">', '</p>')  # 한국어 이름 리턴
-            nResult.append(rKorName[0])  # String_slice(nStr, '<p class="k_name">', '<').strip()) # 한국어 이름
-            nResult.append(Papago_Trans(nEntity, 'en'))  # eng name
-            # nResult.append(String_slice(nStr, 'e_name ovf-hide"><br/>', '(<span')) # 영어 이름
-            Logging('### 배우 이미지 정보 Actor info  img:' + nResult[0] + ' 한국어 Name_kor: ' + nResult[1] + ' 외국어 Name_eng: ' +
-                    nResult[2], 'Debug')
-            return nResult
+        Asite=str(Prefs['Actor_site'])
     except:
-        return
+        Asite='AVDBS'
 
+    if ( Asite == 'AVDBS' ):
+        try:
+            if (nEntity == ''): return
+            Logging('############# Actor Info from avdbs ##############', 'Info')
+            nEntity = nEntity.decode('utf8')
+            Logging('검색할 배우명 : ' + nEntity, 'Debug')
+            Search_URL = 'https://www.avdbs.com/w2017/page/search/search_actor.php?kwd=' + nEntity  # urllib2.quote(nEntity) #한글, 일어등은 quote 해줘야 함
+            Logging('### search URL: =>' + Search_URL + '<=', 'Debug')
+            searchResults = HTTP.Request(Search_URL, headers=HDR_AVDBS, timeout=int(Prefs['timeout'])).content
+            # Logging('### searchResults: ' + searchResults,'Debug')
+            nResult = []
+            if (searchResults == '' or searchResults.find('검색된 배우가 없습니다') <> -1):
+                # 검색결과 없을때
+                nResult.append('')  # image url
+                nResult.append(Papago_Trans(nEntity, 'ja'))  # kor name
+                nResult.append(Papago_Trans(nEntity, 'en'))  # eng name
+                Logging('### 검색된 배우가 없습니다. Actor Return is Null 저장할 배우명: ' + nEntity, 'Info')
+            else:
+                # 검색결과 존재시
+                # Logging('### 배우 정보를 검색했습니다. Actor Return Found', 'Info')
+                nStr = String_slice(searchResults, '<ul class="lst"', '</ul>')
+                # Logging('### 배우 검색됨. 배우 정보: ' + nStr, 'Debug')
+                nimgurl = String_slice(nStr, 'img src="', '"')
+                Logging('### 배우 이미지 주소 Actor image: ' + nimgurl, 'Debug')
+                nResult.append(nimgurl)
+                rKorName = Extract_str(nStr, '<p class="k_name">', '</p>')  # 한국어 이름 리턴
+                nResult.append(rKorName[0])  # String_slice(nStr, '<p class="k_name">', '<').strip()) # 한국어 이름
+                nResult.append(Papago_Trans(nEntity, 'en'))  # eng name
+                # nResult.append(String_slice(nStr, 'e_name ovf-hide"><br/>', '(<span')) # 영어 이름
+                Logging('### 배우 이미지 정보 Actor info  img:' + nResult[0] + ' 한국어 Name_kor: ' + nResult[1] + ' 외국어 Name_eng: ' +
+                        nResult[2], 'Debug')
+            return nResult
+        
+        except:
+            return
+
+    else:
+        # hentaku	홈페이지에서	배우정보를	가져옴(DMM의	경우만.r18은	페이지에	배우	정보	나옴)
+        try:
+            if (nEntity == ''):
+                return
+            Logging('nEntity(Search Actor String) : ' + nEntity,'Debug')
+            Search_URL = 'https://hentaku.co/search/'
+            post_values = {'search_str': nEntity}
+            searchResults = HTTP.Request(Search_URL, values=post_values, timeout=int(Prefs['timeout'])).content
+            Logging('############# Actor Info from Hentaku ##############','Info')
+            # Logging(searchResults)
+            nResult=[]
+            if (searchResults == '' or searchResults.find('class="avstar_wrap"') == -1):
+                # 리턴값이 없을 경우
+                nResult.append('') #image url
+                nResult.append(Papago_Trans(nEntity,'ja')) # kor name
+                nResult.append(Papago_Trans(nEntity,'en')) # eng name
+                Logging('Actor Return not found','Error')
+            else:
+                # 검색결과 존재시
+                nStr = String_slice(searchResults, '<s_article_rep>', '</s_article_rep>')
+                # Logging(nStr)
+                nimgurl = Extract_imgurl(nStr, 'avstar_wrap', '</div>')
+                Logging('Actor image: ' + nimgurl[0],'Debug')
+                if (nimgurl is None):
+                    nResult[0]=''
+                else:
+                    nResult.append(nimgurl[0])
+                nResult.append(String_slice(nStr, 'px;">', ' /'))
+                nResult.append(String_slice(nStr, ' / ', ' /'))
+                Logging('Actor info  #img:' + nResult[0] + '  Name_kor: ' + nResult[1] + '  Name_eng: '+nResult[2] ,'Debug')
+            return nResult
+        except:
+            return
 
 def Get_search_url(SEARCH_URL, txt, reqMode='GET'):
     con = ''
@@ -734,6 +772,7 @@ class redstar_javscraper(Agent.Movies):
         Logging('option check pornav: ' + str(Prefs['pornav_use']), 'Info')
         Logging('option check javlibrary: ' + str(Prefs['javlibrary_use']), 'Info')
         Logging('option check javdb: ' + str(Prefs['javdb_use']), 'Info')
+        Logging('option check ActorSite: ' + str(Prefs['Actor_site']), 'Info')
 
         amateur = True
         media.name = media.name.upper().replace('HHD800 COM@', '')
