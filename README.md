@@ -97,22 +97,15 @@ https://github.com/redstar-javscraper/redstar_javscraper 여기서 issue 탭에 
 - 다운받은 파일에 다음의 규칙을 추가합니다.(중간 아무 라인에나 추가)
 - 이 설정은 아래 주소로 접근할때만 VPN을 사용하도록 하는 설정으로 시놀로지가 토렌트 등 내부에서 인터넷에 접속할 때에는 인터넷을 직접 사용하고 아래 주소만 VPN을 사용하도록 하는 설정입니다.
 
-```# Additional static routes
-#route-nopull if use option, vpn_gateway
-#dmm.co.jp
-route 13.248.196.236 255.252.0.0 net_gateway
-#r18.com
-route 202.6.246.238 255.255.255.255 net_gateway
-#javbus.com
-route 104.25.112.111 255.240.0.0 net_gateway
-#javdb.com
-route 104.21.84.181 255.240.0.0 net_gateway
-#javlibrary.com
-route 104.21.41.117 255.240.0.0 net_gateway
-#pornav.co
-route 104.21.233.147 255.240.0.0 net_gateway
-route 104.21.233.148 255.240.0.0 net_gateway
-```
+route-nopull
+route myexternalip.com 255.255.255.255
+route dmm.co.jp 255.255.255.255
+route pics.dmm.co.jp 255.255.255.255
+route r18.com 255.255.255.255
+route javbus.com 255.255.255.255
+route javlibrary.com 255.255.255.255
+route pornav.co 255.255.255.255
+#redirect-gateway def1
 
 - 시놀로지에서 VPN 인터페이스를 추가합니다. 
 제어판 > 네트워크 > 네트워크 인터페이스에서 '생성>VPN 프로파일생성'을 클릭합니다.
